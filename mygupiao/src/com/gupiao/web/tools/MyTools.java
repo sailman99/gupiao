@@ -864,7 +864,7 @@ public class MyTools {
 	
 	
 	
-	//字符串"2016-01-16"转回日期型 "2016-01-16 21:00:00"
+	//字符串"2016-01-16"转回日期型 "2016-01-16"
 	public static java.sql.Date strToDate(String aStrValue){
 		 String str_year,str_month,str_day;
 		 aStrValue=aStrValue.replaceAll("/","").replaceAll("-","").replaceAll(" ","");
@@ -876,11 +876,28 @@ public class MyTools {
 				GregorianCalendar da = new GregorianCalendar(StrToDouble(str_year).intValue(),StrToDouble(str_month).intValue()-1,StrToDouble(str_day).intValue(),21,0,0);   
 				
 				java.util.Date time = da.getTime();   
-				java.sql.Date sqlDate = new java.sql.Date(time.getTime()); 
+				java.sql.Date sqlDate = new java.sql.Date(time.getTime()); 				
 				return sqlDate;
 		 }
 		 return null;
      }  
+	//字符串"2016-01-16"转回日期型 "2016-01-16 21:00:00"
+	public static java.util.Date strToDateTime(String aStrValue){
+		 String str_year,str_month,str_day;
+		 aStrValue=aStrValue.replaceAll("/","").replaceAll("-","").replaceAll(" ","");
+		 if(aStrValue.length()==8){
+				str_year =aStrValue.substring(0,4);
+				str_month=aStrValue.substring(4,6);
+				str_day=aStrValue.substring(6);
+				
+				GregorianCalendar da = new GregorianCalendar(StrToDouble(str_year).intValue(),StrToDouble(str_month).intValue()-1,StrToDouble(str_day).intValue(),21,0,0);   
+				
+				java.util.Date time = da.getTime();   
+							
+				return time;
+		 }
+		 return null;
+    }  
 	public static InputStream URLdownloadFile(String destUrl) throws IOException{//下载文件生成一个流
 		ByteArrayInputStream bais = null;
 		BufferedInputStream bis = null;

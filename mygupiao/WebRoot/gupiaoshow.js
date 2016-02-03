@@ -2,7 +2,7 @@ Ext.Loader.setConfig({
     enabled: true
 });
 
-Ext.Loader.setPath('Ext.ux', './ext-6.0.0/packages/ux/classic/src');
+Ext.Loader.setPath('Ext.ux', './js/packages/ux/classic/src');
 Ext.require([
     'Ext.grid.*',
     'Ext.layout.container.Border',
@@ -50,8 +50,8 @@ Ext.onReady(function(){
     var centerPanel = Ext.create('Ext.panel.Panel', {
         title : '内容显示',
         collapsible : false,
-        region : 'center',
-        items:myobj
+        region : 'center'
+       
     });
     Ext.create('Ext.container.Viewport', {
         title : 'Border Layout',

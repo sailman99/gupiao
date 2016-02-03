@@ -16,9 +16,9 @@ public class TestGupiaoDAOImpl {
 
 	@Test
 	public void testGetgupiaoshuju() throws Exception {
-		ApplicationContext ctx =new FileSystemXmlApplicationContext("D:/workspaces/mygupiao/WebRoot/WEB-INF/applicationContext.xml");
+		ApplicationContext ctx =new FileSystemXmlApplicationContext("C:/Users/lenovo/git/gupiaoweb/mygupiao/WebRoot/WEB-INF/applicationContext.xml");
 		GupiaoDAO gupiaoDAO=(GupiaoDAO)ctx.getBean("gupiaoDAO");
-		List<Rzzgs> list=(List<Rzzgs>)gupiaoDAO.getrzzgsByCondition(new Double(20),new Double(20));
+		List<Rzzgs> list=(List<Rzzgs>)gupiaoDAO.getrzzgsByCondition(new Double(20),new Double(20),"2015-09-30");
 		for(Rzzgs rzzgs:list){
 			System.out.println(rzzgs.getRiqi());
 		}

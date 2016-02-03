@@ -37,7 +37,7 @@
 			value="oracle.jdbc.driver.OracleDriver">
 		</property>
 		<property name="url"
-			value="jdbc:oracle:thin:@127.0.0.1:1521:ctais">
+			value="jdbc:oracle:thin:@113.107.154.131:1521:ctais">
 		</property>
 		<property name="username" value="tempuser"></property>
 		<property name="password" value="12345678"></property>
@@ -66,6 +66,10 @@
 				<prop key="log4j.logger.net.sf.hibernate">debug</prop>
 				
 				<prop key="hibernate.current_session_context_class">org.springframework.orm.hibernate4.SpringSessionContext</prop>
+				<!-- 缓存设置 
+				<prop key="hibernate.cache.provider_class">net.sf.ehcache.hibernate.EhCacheProvider</prop>
+                <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
+				-->
 				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.format_sql">true</prop>
 				<!-- 配置启动应用时，是否根据Hibernate映射自动创建数据表 
