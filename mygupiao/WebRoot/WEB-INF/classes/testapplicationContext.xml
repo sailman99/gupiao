@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+
+<!-- 数据源配置 -->
+	<!-- <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	    <property name="driverClassName">
+	    	<value>org.logicalcobwebs.proxool.ProxoolDriver</value>
+	    </property>
+	    <property name="url">
+	    	<value>proxool.dbpool</value>
+	    </property>
+    </bean>
+	-->
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName"
+			value="oracle.jdbc.driver.OracleDriver">
+		</property>
+		<property name="url"
+			value="jdbc:oracle:thin:@127.0.0.1:1521:ctais">
+		</property>
+		<property name="username" value="tempuser"></property>
+		<property name="password" value="12345678"></property>
+	</bean> 
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean ">
+		<property name="dataSource" ref="dataSource" />
+		<!-- 映射文件 -->
+			<property name="mappingResources">
+			<list>
+			<value>com/gupiao/model/persist/entity/OracleProreduces.hbm.xml</value>                
+			</list>
+			</property> 
+		<property name="annotatedClasses"><!-- 影射实体类 -->
+			<list>
+				<value>com.gupiao.model.persist.entity.Gupiao</value>
+				<value>com.gupiao.model.persist.entity.Mbcjgs</value>
+				<value>com.gupiao.model.persist.entity.MbcjgsjsTemporary</value>	
+				<value>com.gupiao.model.persist.entity.Gupiaoshuju</value>		 				
+				<value>com.gupiao.model.persist.entity.Inoutprice</value>	
+				<value>com.gupiao.model.persist.entity.Whilework</value>
+				<value>com.gupiao.model.persist.entity.Rzzgszc</value>		
+				<value>com.gupiao.model.persist.entity.Sendemail</value>				
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<!-- 指定Hibernate的连接方言 -->
+				<prop key="hibernate.dialect">
+					org.hibernate.dialect.Oracle10gDialect
+				</prop>
+				<prop key="log4j.logger.net.sf.hibernate">debug</prop>
+				<prop key="hibernate.current_session_context_class">
+					thread
+				</prop>
+				<!--<prop key="hibernate.current_session_context_class">org.springframework.orm.hibernate4.SpringSessionContext</prop>-->
+				<prop key="hibernate.show_sql">falsh</prop>
+				<prop key="hibernate.format_sql">true</prop>
+				<!-- 配置启动应用时，是否根据Hibernate映射自动创建数据表 
+					<prop key="hibernate.hbm2ddl.auto">update</prop>-->
+			</props>
+		</property>
+	</bean>
+	<!-- 事务管理 --><!--
+	<bean id="transcationManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+-->
+	   <bean id="txManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+		</bean>
+		
+		<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+		<tx:method name="save*" propagation="REQUIRED"/>
+		<tx:method name="delete*" propagation="REQUIRED"/>
+		<tx:method name="get*" propagation="SUPPORTS"/>
+		</tx:attributes>
+		</tx:advice>
+		
+		<aop:config>
+		<aop:pointcut id="allBiz" expression="execution(* com.gupiao.model.service.impl.*.*(..))" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="allBiz"/>
+		</aop:config> 
+	<!-- 定义Spring JDBC模板类bean -->
+	<bean id="jdbcTemplate"
+		class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<!--   <bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">    
+		<property name="sessionFactory">    
+		<ref bean="sessionFactory"/>    
+		</property>    
+		</bean> -->
+	<bean id="gupiaoAction" class="com.gupiao.struts.action.GupiaoAction">
+		<property name="gupiaoDAO" ref="gupiaoDAO" />
+	</bean>	
+	<!--  <bean id="gupiaoBo" class="com.gupiao.model.bo.impl.GupiaoBoImpl">
+		<property name="gupiaoDAO" ref="gupiaoDAO"/>
+	</bean>
+	-->
+	<bean id="gupiaoDAO"
+		class="com.gupiao.model.dao.impl.GupiaoDAOImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>	
+	<bean id="taskJob" class="com.gupiao.web.tools.TaskJob" >
+		<property name="gupiaoDAO" ref="gupiaoDAO" />
+	</bean>
+</beans>

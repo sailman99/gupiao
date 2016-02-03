@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+          "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<constant name="struts.i18n.encoding" value="utf-8"></constant>
+   	<constant name="struts.objectFactory" value="spring"></constant>
+  	<include file="struts-default.xml"/>
+  	<include file="struts-plugin.xml" />
+   
+    <constant name="struts.devMode" value="false" />
+ 	 <!-- Add packages here --> 	 
+	<package name="default" namespace="/" extends="struts-default,json-default">		
+		 <action name="JsonAction"     class="jsonAction" method="testjson">    
+		 	<result type="json">  
+                    <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
+            </result>          
+        </action>  
+     	<action name="GupiaoAction" class="com.gupiao.struts.action.GupiaoAction">     	
+        	<result>huolipanwarning.jsp</result>
+        	<result name="gudongshutemp">gudongshutemp.jsp</result>
+        	<result name="ccxxtemp">ccxxtemp.jsp</result>
+        	<result name="gudongshuwarning" >gudongshuwarning.jsp</result>
+        	<result name="huolipanwaring" >huolipanwarning.jsp</result>
+        	<result name="cycwaring" >cycwarning.jsp</result>
+        	<result name="tianlangbankuaiwarning">tianlangbankuaiwarning.jsp</result>
+        	<result name="ddeddxwarning">ddeddxwarning.jsp</result>
+        	<result name="ddeddywarning">ddeddywarning.jsp</result>
+        	<result name="ddetemp">ddetemp.jsp</result>
+        	<result name="chichuangxinxi_blank">chichuangxinxi_blank.jsp</result>
+        	<result name="ccxx_blank_counts">ccxx_blank_counts.jsp</result>
+        	<result name="showpositionxy">showpositionxy.jsp</result>
+        	<result name="mbcjgsjs_riqi">mbcjgsjs.jsp</result>
+        	<result name="mbcjgsjs_temp">mbcjgswarning.jsp</result>
+        	<result name="mbcjgsjs_tempzuidicyc">mbcjgswarningzuidicyc.jsp</result>
+        	<result name="mbcjgsjs_tempzuidicycB">mbcjgswarningzuidicycB.jsp</result>
+        	<result name="seilin">seilin.jsp</result>    
+        	<result name="seilout">seilout.jsp</result>       	
+        	<result name="expma">index.html</result>
+        	<result name="index">index.jsp</result>
+        	<result name="seilininput">seilininputlist.jsp</result>
+        	<result name="setseilininput">seilininput.jsp</result>
+        	<result name="testjson">k-painter.v1.1.htm</result>
+        </action>        
+    </package>
+
+	
+
+</struts>    

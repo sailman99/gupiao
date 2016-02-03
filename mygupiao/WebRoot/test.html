@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+	<head> 
+		 
+		<script src="http://code.jquery.com/jquery-latest.js"></script>  
+		<script>
+			var LocString=String(window.document.location.href);   
+	     
+			function getQueryStr(str){   
+			     var rs = new RegExp("(^|)"+str+"=([^\&]*)(\&|$)","gi").exec(LocString), tmp;   
+			       
+			     if(tmp=rs){   
+			            return tmp[2];   
+			     }   
+			       
+			       // parameter cannot be found   
+			       return "";   
+			}   
+			alert(getQueryStr("gupiaodaima"));
+		</script> 
+		<script id="data" type="text/javascript" src="test-data.js"></script>
+	</head>
+	<body>  
+		<p2>Not loaded .</p> 
+		 
+	</body>
+</html>
