@@ -282,14 +282,15 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 	
 	
 	
-	public List<Rzzgs> getrzzgsByCondition(Double jsqbh,Double jsqbh2) {
+	public List<Rzzgs> getrzzgsByCondition(Double jsqbh,Double jsqbh2,String riqi) {
 		
 		System.out.println("gupiaoDAOImpl");
 		
 		Session session=getOneSession();
-		Query query = session.createSQLQuery("select * from Rzzgs where jsqbh>=:v_jsqbh and jsqbh2>=:v_jsqbh2 ").addEntity(Rzzgs.class);
+		Query query = session.createSQLQuery("select * from Rzzgs where jsqbh>=:v_jsqbh and jsqbh2>=:v_jsqbh2 and riqi=:v_riqi").addEntity(Rzzgs.class);
 		query.setParameter("v_jsqbh", jsqbh);
 		query.setParameter("v_jsqbh2", jsqbh2);
+		query.setParameter("v_riqi",MyTools.strToDate(riqi));
 		List<Rzzgs> list=query.list();
 		
 		session.close();

@@ -33,6 +33,6 @@ public interface GupiaoDAO {
 	public List<Gupiaoshuju> getgupiaoshuju(String gupiaodaima) throws Exception;
 	public void updateGpsclientdata(List<Gpsclientdata> list);
 	public List<Rzzgs> getrzzgsbygupiaodaima(String gupiaodaima);
-	public List<Rzzgs> getrzzgsByCondition(Double jsqhb,Double jsqhb2);
+	public List<Rzzgs> getrzzgsByCondition(Double jsqhb,Double jsqhb2,String riqi);
 	public List<Rzzgs> getrzzgsbyjsqbhandjsqbh2(Double jsqbh,Double jsqbh2);
 }

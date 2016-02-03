@@ -39,7 +39,7 @@ Ext.define('Task', {//定义一个新类
 			mystorea.load({params:{gupiaodaima:records[0].data.gupiaodaima}});		
 		}
 	});
-	mystore.load({params:{jsqbh:20,jsqbh2:40}});
+	mystore.load({params:{jsqbh:40,jsqbh2:40,riqi:'2015-09-30'}});
 
 
 	//定义一个新类

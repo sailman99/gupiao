@@ -38,16 +38,14 @@ public class JsonAction  extends ActionSupport {
 	
 	private String gupiaodaima;
 	
+	private String riqi;
+	
 	private Double jsqbh;
 	
 	private Double jsqbh2;
 	
 	private HttpServletRequest httpServletRequest=ServletActionContext.getRequest();
 	
-	
-	public JsonAction(){
-		System.out.println("JsonAction is create");
-	}
 	
 	
 	public String getGupiaodaima() {
@@ -81,6 +79,18 @@ public class JsonAction  extends ActionSupport {
 	}
 
 
+	public String getRiqi() {
+		return riqi;
+	}
+
+
+
+	public void setRiqi(String riqi) {
+		this.riqi = riqi;
+	}
+
+
+
 	@Resource(name="gupiaoDAO")
 	public void setGupiaoDAO(GupiaoDAO gupiaoDAO) {
 		this.gupiaoDAO = gupiaoDAO;
@@ -105,7 +115,7 @@ public class JsonAction  extends ActionSupport {
 		config.registerJsonValueProcessor(java.sql.Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd"));  
 	
 		
-		resultTree=JSONArray.fromObject(gupiaoDAO.getrzzgsByCondition(this.jsqbh,this.jsqbh2),config);
+		resultTree=JSONArray.fromObject(gupiaoDAO.getrzzgsByCondition(this.jsqbh,this.jsqbh2,this.riqi),config);
 		return "success";
 		
 	}

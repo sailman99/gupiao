@@ -864,9 +864,10 @@ public class MyTools {
 	
 	
 	
-	
+	//字符串"2016-01-16"转回日期型 "2016-01-16 21:00:00"
 	public static java.sql.Date strToDate(String aStrValue){
 		 String str_year,str_month,str_day;
+		 aStrValue=aStrValue.replaceAll("/","").replaceAll("-","").replaceAll(" ","");
 		 if(aStrValue.length()==8){
 				str_year =aStrValue.substring(0,4);
 				str_month=aStrValue.substring(4,6);
