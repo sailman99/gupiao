@@ -15,19 +15,6 @@ Ext.require([
 
 Ext.onReady(function(){
 	Ext.tip.QuickTipManager.init();  
-	
-	
-	var myobj = new myPanel(); 
-	
-	myobj.reconfigure(mystore);
-	var myobj1= new myPanel();
-	myobj1.reconfigure(mystorea);
-	/*
-	myobj.on('rowdblclick',function( parent,record){				
-		mystorea.reload({params: {gupiaodaima:record.data.gupiaodaima}});
-		myobj1.reconfigure(mystorea);
-	},this);
-*/
 	var northPanel = Ext.create('Ext.panel.Panel', {
         title : 'admin系统管理平台',
         border : false,
@@ -50,14 +37,13 @@ Ext.onReady(function(){
     var centerPanel = Ext.create('Ext.panel.Panel', {
         title : '内容显示',
         collapsible : false,
-        region : 'center'
-       
+        region : 'center',
+        items:[myobj,myobj1]
     });
     Ext.create('Ext.container.Viewport', {
         title : 'Border Layout',
         layout : 'border',
-        items : [ northPanel, southPanel, westPanel, centerPanel ],
+        items : [ northPanel, westPanel, centerPanel ],
         renderTo : Ext.getBody()
-    });
-
+    });    
 });

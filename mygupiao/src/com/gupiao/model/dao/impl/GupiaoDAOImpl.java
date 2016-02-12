@@ -1,36 +1,21 @@
 package com.gupiao.model.dao.impl;
 
 import java.sql.Connection;
-import java.sql.Date;
+
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
 import java.util.Iterator;
 import java.util.List;
-
-
-
-
-
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
-import org.hibernate.Transaction;
 import org.hibernate.jdbc.Work;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
-import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.annotation.Propagation;
-
-
-
-
-
 
 import com.gupiao.model.dao.GupiaoDAO;
 import com.gupiao.model.persist.entity.Gupiaoshuju;
@@ -53,16 +38,14 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 	private int Result=0;
 	private SessionFactory sessionFactory;
 	
-	
-	
+
 	@Autowired
-	public void GupiaoDAOImpl(SessionFactory sessionFactory){
-		this.sessionFactory=sessionFactory;
+	public GupiaoDAOImpl(SessionFactory sessionFactory){
+		this.sessionFactory=sessionFactory;				
 	}
-	private Session getOneSession(){
-		return this.sessionFactory.openSession();
+	private StatelessSession getOneStatelessSession(){
+		return this.sessionFactory.openStatelessSession();
 	}
-	
 	@Transactional(propagation=Propagation.REQUIRED,readOnly=false)
 	public void updateGpsclientdata(List<Gpsclientdata> list){
 		Iterator<Gpsclientdata> iter=list.iterator();
@@ -78,7 +61,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 	public List<Gupiaoshuju> getgupiaoshuju(String str_gupiaodaima) throws Exception{
 		String tempurl="";
 		String sinajs[];
-		Session session=getOneSession();
+		StatelessSession session=getOneStatelessSession();
 	//	session.beginTransaction();
 		Query query = session.createQuery("from Gupiaoshuju where gupiaodaima="+str_gupiaodaima+" and riqi>sysdate-200 order by riqi");
 		
@@ -112,9 +95,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		
 	}
 	public List<MbcjgsjsTemporary> getfindZUIDICYC13return(){
-		
-		
-		Session session=getOneSession();
+		StatelessSession session=getOneStatelessSession();
 		Query query = session.getNamedQuery("getfindZUIDICYC13");		
 		List< MbcjgsjsTemporary> list=query.list();
 		session.close();
@@ -124,7 +105,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 	}
 	public String getprocedurecondition(String str_procedurethread){	
 		String str_return="";
-		Session session=getOneSession();		
+		StatelessSession session=getOneStatelessSession();		
 		Query query = session.createQuery("from Procedurecondition where procedurethread="+str_procedurethread);			
 		List<Procedurecondition> list=query.list();
 		Iterator<Procedurecondition> iterprocedurecondition = list.iterator();
@@ -136,7 +117,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		return str_return;
 	}
 	public List<MbcjgsjsTemporary> findlow(){
-		Session session=getOneSession();		
+		StatelessSession session=getOneStatelessSession();
 		Query query = session.getNamedQuery("findlow"); 		
 		List< MbcjgsjsTemporary> list=query.list();	
 		session.close();
@@ -144,8 +125,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 	}
 	
 	public List<Inoutprice> getInoutprice(){
-		Session session=getOneSession();
-		
+		StatelessSession session=getOneStatelessSession();
 		Query query = session.createQuery("from Inoutprice");			
 		List<Inoutprice> list=query.list();
 		session.close();
@@ -154,8 +134,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 	}
 	
 	public List<Sendemail> getsendemail(){
-		Session session=getOneSession();
-		
+		StatelessSession session=getOneStatelessSession();
 		Query query = session.createQuery("from Sendemail");			
 		List<Sendemail> list=query.list();
 		session.close();
@@ -163,22 +142,22 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		
 	}
 	public List<Trendlines> getTrendlines(){
-		Session session=getOneSession();
+		StatelessSession session=getOneStatelessSession();
 		Query query = session.createQuery("from Trendlines where riqi4 is null");			
 		List<Trendlines> list=query.list();
 		session.close();
 		return list;
 		
 	}
+	@Transactional(propagation=Propagation.REQUIRED,readOnly=false)
 	public void deleteInoutprice(String str_gupiaodaima){
-		Session session=getOneSession();
-		session.beginTransaction();
+		Session session = this.sessionFactory.getCurrentSession();
 		Inoutprice inprice =(Inoutprice)session.get(Inoutprice.class,str_gupiaodaima);
 		session.delete(inprice);		
-		session.close();
+//		session.close();
 	}
 	public double getzuixincyc13(String str_gupiaodaima){
-		Session session=getOneSession();
+		StatelessSession session=getOneStatelessSession();
 		Query query = session.createSQLQuery("select cyc13 from gupiaoshuju where gupiaodaima=:v_gupiaodaima and  riqi=(select max(riqi) from gupiaoshuju a where a.gupiaodaima=:v_gupiaodaima)");
 		query.setParameter("v_gupiaodaima", str_gupiaodaima);
 		Double cyc13 = Double.parseDouble(query.list().iterator().next().toString());
@@ -187,7 +166,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 	}
 	public void updateWhilework(){
 		
-		Session session=getOneSession();
+		Session session = this.sessionFactory.getCurrentSession();
 			//定义一个匿名类，实现了Work接口		
 			Work work=new Work(){		
 				public void execute(Connection conn)throws SQLException{
@@ -201,12 +180,12 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 			//执行work 
 			
 			session.doWork(work);
-			session.close();
+	//		session.close();
 	}
 	public int getWhileworkspilttime(){
 		
 		
-		Session session=getOneSession();
+		Session session = this.sessionFactory.getCurrentSession();
 		//定义一个匿名类，实现了Work接口
 		
 		Work work=new Work(){		
@@ -224,7 +203,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		//执行work 
 		
 		session.doWork(work);		
-		session.close();
+	//	session.close();
 		return Result;
 	}
 	
@@ -233,7 +212,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		
 		
 		
-		Session session=getOneSession();
+		Session session = this.sessionFactory.getCurrentSession();
 		//定义一个匿名类，实现了Work接口
 		
 		Work work=new Work(){		
@@ -251,11 +230,11 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		//执行work 
 		
 		session.doWork(work);		
-		session.close();
+	//	session.close();
 		return Result;
 	}
 	public List<MbcjgsjsTemporary> seilininput(){
-		Session session=getOneSession();
+		StatelessSession session=getOneStatelessSession();
 		Query query = session.getNamedQuery("seilininput"); 		
 		List< MbcjgsjsTemporary> list=query.list();
 		session.close();
@@ -264,7 +243,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 	}
 	public List<Rzzgszc> getrzzgszcsendmail(){
 		
-		Session session=getOneSession();
+		StatelessSession session=getOneStatelessSession();
 		Query query = session.getNamedQuery("getrzzgszcsendmail");
 		List<Rzzgszc> list=query.list();
 		session.close();
@@ -274,38 +253,38 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 	@Transactional(propagation=Propagation.REQUIRED,readOnly=false)
 	public void SaveObject(Object k) {
 		// TODO Auto-generated method stub
-		Session session=getOneSession();	
+		Session session = this.sessionFactory.getCurrentSession();
 		session.saveOrUpdate(k);
-		session.close();
+	//	session.close();
 		//this.getHibernateTemplate().getSessionFactory().getCurrentSession().saveOrUpdate(k);
 	}
 	
 	
 	
 	public List<Rzzgs> getrzzgsByCondition(Double jsqbh,Double jsqbh2,String riqi) {
-		
-		Session session=getOneSession();
+		//Session session=this.sessionFactory.getCurrentSession();
+		StatelessSession session=getOneStatelessSession();
 		Query query = session.createSQLQuery("select * from Rzzgs where jsqbh>=:v_jsqbh and jsqbh2>=:v_jsqbh2 and riqi=:v_riqi").addEntity(Rzzgs.class);
 		query.setParameter("v_jsqbh", jsqbh);
 		query.setParameter("v_jsqbh2", jsqbh2);
 		query.setParameter("v_riqi",MyTools.strToDateTime(riqi));
 		List<Rzzgs> list=query.list();		
-	//	session.close();
+		session.close();
         return list;
 	}
 	public List<Rzzgs> getrzzgsbygupiaodaima(String gupiaodaima){
 
-		Session session=getOneSession();
+		StatelessSession session=getOneStatelessSession();
 		Query query = session.createSQLQuery("select * from Rzzgs where gupiaodaima=:v_gupiaodaima order by riqi desc").addEntity(Rzzgs.class);
 		query.setParameter("v_gupiaodaima", gupiaodaima);
 		List<Rzzgs> list=query.list();
 		
-	//	session.close();
+		session.close();
         return list;
 	}
 	public List<Rzzgs> getrzzgsbyjsqbhandjsqbh2(Double jsqbh,Double jsqbh2){
 
-		Session session=getOneSession();
+		StatelessSession session=getOneStatelessSession();
 		if (null==jsqbh){
 			jsqbh=0.0;
 		}
