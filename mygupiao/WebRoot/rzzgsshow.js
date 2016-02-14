@@ -15,7 +15,21 @@ Ext.define('Task', {//定义一个新类
 	        {name: 'jsqbh6', type: 'float'}
 	    ]
 	});
-
+Ext.define('RiqiGroupCounts',{
+	extend:'Ext.data.Model',
+	fields:[
+	        {name:'riqi',type:'date'},
+	        {name:'rowcounts',type:'int'}
+	        ]
+});
+	var mystoreRiqiGroupCounts = Ext.create('Ext.data.Store',{
+		model:'RiqiGroupCounts',
+		asynchronousLoad : false,
+	    proxy:{
+	    	type:'ajax',
+		    url:'JsonAction!getrzzgsGroupByCondition'		   
+	    }
+	});
     var mystoretmp=Ext.create('Ext.data.Store',{
     	model: 'Task',  //属性model由上面新类Task赋值  
     	data:[{}]
@@ -48,7 +62,7 @@ Ext.define('Task', {//定义一个新类
 		    extend:'Ext.grid.Panel',
 		    bufferedRenderer: false,
 		    store:mystoretmp,
-	        width: 700,
+	        width: '100%',
 	        height: 250,
 	        frame: false,           
 	        columnLines : true,      
@@ -56,42 +70,42 @@ Ext.define('Task', {//定义一个新类
 	      split: true,
 	      columns: [{
 		            xtype: 'rownumberer',
-		            width: 40,
+		            width: '4%',
 		            sortable: false
 	        	},{
 	                header: '股票代码',
-	                width: 80,
+	                width: '12%',
 	                sortable: true,
 	                dataIndex: 'gupiaodaima'
 	            },{
 	                header: '日期',
 	                xtype: 'datecolumn',
-	                width: 80,	                
+	                width: '12%',	                
 	                sortable: true,
 	                dataIndex: 'riqi'            
 	            }, {
 	                header: '股东总数',
-	                width: 80,             
+	                width: '12%',             
 	                dataIndex: 'gdzs'                
 	            }, {
 	            	 header: '人均持股数',
-	                 width: 80,             
+	                 width: '12%',             
 	                 dataIndex: 'rzzg'
 	            }, { 
 	            	header: '人均持股上升',
-	                width: 80,             
+	                width: '12%',             
 	                dataIndex: 'jsqbh'
 	            }, {
 	                header: '总股本（万股）',
-	                width: 80,             
+	                width: '12%',             
 	                dataIndex: 'zgb'
 	            }, {
 	            	 header: '流通股（万股）',
-	                 width: 80,             
+	                 width: '12%',             
 	                 dataIndex: 'ltg'                
 	            }, { 
 	            	header: '两年内上升',
-	                width: 80,             
+	                width: '12%',             
 	                dataIndex: 'jsqbh2'
 	            }]
 	 });

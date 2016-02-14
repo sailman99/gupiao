@@ -40,6 +40,13 @@ Ext.onReady(function(){
         region : 'center',
         items:[myobj,myobj1]
     });
+    /*
+    westPanel.add(Ext.create('Ext.Button', {
+        text: 'Click me',
+        handler: function() {
+            alert('You clicked the button!');
+        }
+    });*/
     Ext.create('Ext.container.Viewport', {
         title : 'Border Layout',
         layout : 'border',

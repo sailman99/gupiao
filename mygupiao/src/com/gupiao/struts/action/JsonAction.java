@@ -109,7 +109,16 @@ public class JsonAction  extends ActionSupport {
 		this.resultTree = resultTree;
 	}
 
+	public String getrzzgsGroupByCondition() {
+		JsonConfig config = new JsonConfig();  
+		config.registerJsonValueProcessor(java.sql.Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd"));  
 	
+		
+		resultTree=JSONArray.fromObject(gupiaoDAO.getrzzgsGroupByCondition(this.jsqbh,this.jsqbh2),config);
+		return "success";
+		
+		
+	}
 	public String getrzzgsByCondition(){//通过条件查询
 		JsonConfig config = new JsonConfig();  
 		config.registerJsonValueProcessor(java.sql.Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd"));  

@@ -12,6 +12,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 import org.hibernate.jdbc.Work;
+import org.hibernate.type.DateType;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +25,7 @@ import com.gupiao.model.persist.entity.Gupiaoshuju;
 import com.gupiao.model.persist.entity.Inoutprice;
 import com.gupiao.model.persist.entity.MbcjgsjsTemporary;
 import com.gupiao.model.persist.entity.Procedurecondition;
+import com.gupiao.model.persist.entity.RiqiGroupcounts;
 import com.gupiao.model.persist.entity.Rzzgs;
 import com.gupiao.model.persist.entity.Rzzgszc;
 import com.gupiao.model.persist.entity.Sendemail;
@@ -31,7 +35,7 @@ import com.example.share.Gpsclientdata;
 
 
 @Repository("gupiaoDAO")
-@Transactional(propagation=Propagation.SUPPORTS,readOnly=true)
+@Transactional(propagation=Propagation.REQUIRED,readOnly=true)
 public class GupiaoDAOImpl  implements GupiaoDAO {
 	
 	
@@ -184,8 +188,9 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 	}
 	public int getWhileworkspilttime(){
 		
-		
+		//因这过程是在定时过程用，故要
 		Session session = this.sessionFactory.getCurrentSession();
+	
 		//定义一个匿名类，实现了Work接口
 		
 		Work work=new Work(){		
@@ -203,6 +208,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		//执行work 
 		
 		session.doWork(work);		
+	//	session.flush();
 	//	session.close();
 		return Result;
 	}
@@ -259,7 +265,17 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		//this.getHibernateTemplate().getSessionFactory().getCurrentSession().saveOrUpdate(k);
 	}
 	
-	
+	public List getrzzgsGroupByCondition(Double jsqbh,Double jsqbh2) {
+		//Session session=this.sessionFactory.getCurrentSession();
+		StatelessSession session=getOneStatelessSession();
+		Query query = session.createSQLQuery("select riqi,count(*) as rowcounts from Rzzgs where jsqbh>=:v_jsqbh and jsqbh2>=:v_jsqbh2  group by riqi order by riqi desc")
+				.addEntity(RiqiGroupcounts.class);
+		query.setParameter("v_jsqbh", jsqbh);
+		query.setParameter("v_jsqbh2", jsqbh2);
+		List list=query.list();		
+		session.close();
+        return list;
+	}
 	
 	public List<Rzzgs> getrzzgsByCondition(Double jsqbh,Double jsqbh2,String riqi) {
 		//Session session=this.sessionFactory.getCurrentSession();
