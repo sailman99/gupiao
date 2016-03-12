@@ -18,6 +18,9 @@ import javax.servlet.http.HttpServletResponse;
 //import net.sf.json.JSONArray;
 
 
+
+
+
 import net.sf.json.JSONArray;
 
 import org.apache.struts2.StrutsStatics;
@@ -28,6 +31,10 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 
 
 
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 import com.gupiao.model.dao.GupiaoDAO;
 
@@ -42,7 +49,8 @@ import com.gupiao.model.persist.entity.Procedurecondition;
 import com.gupiao.web.tools.MyTools;
 import com.gupiao.web.tools.MyTools.PositionXY;
 import com.opensymphony.xwork2.ModelDriven;
-
+@Service
+@Scope("prototype")
 public class GupiaoAction  implements ModelDriven,ServletRequestAware,ServletResponseAware,  StrutsStatics {  
 	//ServletResponseAware.setServletResponse(HttpServletResponse)
 	private HttpServletRequest request;
@@ -98,11 +106,16 @@ public class GupiaoAction  implements ModelDriven,ServletRequestAware,ServletRes
 
 	private GupiaoDAO gupiaoDAO;
 	
+	/*
 	public void setGupiaoDAO(GupiaoDAO gupiaoDAO) {
 		this.gupiaoDAO = gupiaoDAO;
 	}
 
-	
+	*/
+	@Autowired
+	public GupiaoAction(GupiaoDAO gupiaoDAO){
+		this.gupiaoDAO=gupiaoDAO;
+	}
 	
 	public void setServletResponse(HttpServletResponse response) {  
 		        this.response = response;  

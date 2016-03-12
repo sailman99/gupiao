@@ -27,12 +27,13 @@
 	    	<value>"java:comp/env/jdbc/ctais"</value>
 	    </property>
     </bean>
+   
      <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
     	<property name="jndiName" value="java:comp/env/jdbc/ctais" />    	  
-    </bean>-->
-	
+    </bean>
+	-->
 	<bean id="dataSource"
-		class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
 		<property name="driverClassName"
 			value="oracle.jdbc.driver.OracleDriver">
 		</property>
@@ -64,8 +65,9 @@
 					org.hibernate.dialect.Oracle10gDialect
 				</prop>
 				<prop key="log4j.logger.net.sf.hibernate">debug</prop>
-				
+				 
 				<prop key="hibernate.current_session_context_class">org.springframework.orm.hibernate4.SpringSessionContext</prop>
+				 
 				<!-- 缓存设置 
 				<prop key="hibernate.cache.provider_class">net.sf.ehcache.hibernate.EhCacheProvider</prop>
                 <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
@@ -87,41 +89,7 @@
 			<property name="sessionFactory" ref="sessionFactory"></property>
 		</bean>
 		<tx:annotation-driven transaction-manager="txManager" />
-		<!-- 
-		<tx:advice id="txAdvice" transaction-manager="txManager">
-			<tx:attributes>
-				<tx:method name="save*" propagation="REQUIRED"/>
-				<tx:method name="delete*" propagation="REQUIRED"/>
-				<tx:method name="get*" read-only="true" propagation="NOT_SUPPORTED" />  		
-			</tx:attributes>
-		</tx:advice>
 		
-		<aop:config  proxy-target-class="true">
-			<aop:pointcut id="allBiz"  expression="execution(* com.gupiao.test.*.*(..))" />
-			<aop:advisor advice-ref="txAdvice" pointcut-ref="allBiz"/>
-		</aop:config> 
-	 -->
-	<!-- 定义Spring JDBC模板类bean -->
-	<bean id="simpleJdbcTemplate"
-		class="org.springframework.jdbc.core.simple.SimpleJdbcTemplate">
-		<constructor-arg ref="dataSource" />	
-	</bean>
-	<!-- 
-	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">    
-		<property name="sessionFactory" ref="sessionFactory"/>    
-	</bean>
-	
-	<bean id="gupiaoAction" class="com.gupiao.struts.action.GupiaoAction">
-		<property name="gupiaoDAO" ref="gupiaoDAO" />
-	</bean>	 -->
-	<!--
-	 <bean id="jsonAction" class="com.gupiao.struts.action.JsonAction">
-		<property name="gupiaoDAO" ref="gupiaoDAO" />
-	</bean>	 
-	  <bean id="gupiaoBo" class="com.gupiao.model.bo.impl.GupiaoBoImpl">
-		<property name="gupiaoDAO" ref="gupiaoDAO"/>
-	</bean>
-	-->
 	
 	
 	

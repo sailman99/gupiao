@@ -39,7 +39,7 @@ Ext.define('RiqiGroupCounts',{
 	    asynchronousLoad : false,
 	    proxy:{
 	    	type:'ajax',
-		    url:'JsonAction!getrzzgsByCondition'		   
+		    url:'JsonActiongetrzzgsByCondition'		   
 	    }
 	});
 
@@ -49,7 +49,7 @@ Ext.define('RiqiGroupCounts',{
 	    asynchronousLoad : false,
 	    proxy:{
 	    	type:'ajax',
-		    url:'JsonAction!getrzzgsbygupiaodaima'
+		    url:'JsonActiongetrzzgsbygupiaodaima'
 		    
 	    }
 	});
@@ -126,4 +126,4 @@ Ext.define('RiqiGroupCounts',{
 			myobj1.reconfigure(mystorea);
 		}
 	});
-	mystore.load({params:{jsqbh:20,jsqbh2:40,riqi:'2015-09-30'}});
+	mystore.load({params:{jsqbh:10,jsqbh2:40,riqi:'2015-12-31'}});

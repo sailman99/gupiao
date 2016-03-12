@@ -17,7 +17,23 @@
                     <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
             </result>          
         </action>  
-     	<action name="GupiaoAction" class="com.gupiao.struts.action.GupiaoAction">     	
+        
+        <action name="JsonActiongetrzzgsbygupiaodaima"     class="jsonAction" method="getrzzgsbygupiaodaima">    
+		 	<result type="json">  
+                    <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
+            </result>          
+        </action>  
+        
+        <action name="JsonActiongetrzzgsByCondition"     class="jsonAction" method="getrzzgsByCondition">    
+		 	<result type="json">  
+                    <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
+            </result>          
+        </action>  
+        
+        
+        
+        
+     	<action name="GupiaoAction" class="gupiaoAction">     	
         	<result>huolipanwarning.jsp</result>
         	<result name="gudongshutemp">gudongshutemp.jsp</result>
         	<result name="ccxxtemp">ccxxtemp.jsp</result>

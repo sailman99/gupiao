@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.ServletActionContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +47,10 @@ public class JsonAction  extends ActionSupport {
 	
 	private HttpServletRequest httpServletRequest=ServletActionContext.getRequest();
 	
-	
+	@Autowired
+	public JsonAction(GupiaoDAO gupiaoDAO){
+		this.gupiaoDAO=gupiaoDAO;
+	}
 	
 	public String getGupiaodaima() {
 		return gupiaodaima;
@@ -90,14 +94,14 @@ public class JsonAction  extends ActionSupport {
 	}
 
 
-
+/*
 	@Resource(name="gupiaoDAO")
 	public void setGupiaoDAO(GupiaoDAO gupiaoDAO) {
 		this.gupiaoDAO = gupiaoDAO;
 	}
 
 
-
+*/
 	public JSONArray getResultTree() {
 		return resultTree;
 	}
