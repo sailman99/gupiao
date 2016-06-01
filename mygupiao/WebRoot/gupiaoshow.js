@@ -32,7 +32,14 @@ Ext.onReady(function(){
         region : 'west',
         collapsible : true,
         split : true,
-        width : 200
+        width : 170,
+        layout:{
+        	type:'vbox',
+        	align:'center'
+        },
+        items:[
+               westForm
+        ]
     });
     var centerPanel = Ext.create('Ext.panel.Panel', {
         title : '内容显示',
@@ -52,5 +59,35 @@ Ext.onReady(function(){
         layout : 'border',
         items : [ northPanel, westPanel, centerPanel ],
         renderTo : Ext.getBody()
-    });    
+    });   
+    
+    Ext.Ajax.request({
+        url: 'JsonActiongetMonths',
+
+        success: function(response, opts) {
+            var obj = Ext.decode(response.responseText);
+            var firstrow=0;
+            for(var key in obj){
+            	 if(firstrow==0){//选择第一行作为返回数据的参数
+            		 mystore.reload({params:{jsqbh:5,jsqbh2:40,riqi:obj[key].month}});
+            	 }
+            	 firstrow++;
+            	 Ext.getCmp('mainwestForm').add(Ext.create('Ext.Button',{
+                     text: obj[key].month,
+     					handler:function(){
+     						mystore.reload({params:{jsqbh:Ext.getCmp('jsqbh').value,jsqbh2:Ext.getCmp('jsqbh2').value,riqi:this.text}});
+     						myobj.reconfigure(mystore);
+     					}	
+                 }));
+            }
+        },
+
+        failure: function(response, opts) {
+            console.log('server-side failure with status code ' + response.status);
+        }
+    });
+    
+    
+   
+    
 });

@@ -1,7 +1,6 @@
 package com.gupiao.struts.action;
 
 import java.math.BigDecimal;
-import java.security.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,7 +8,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.ServletActionContext;
@@ -22,8 +20,10 @@ import com.gupiao.model.persist.entity.Gupiaoshuju;
 import com.gupiao.model.persist.entity.JsonGupiaoshuju;
 import com.gupiao.model.persist.entity.Rzzgs;
 import com.gupiao.web.tools.DateJsonValueProcessor;
+import com.gupiao.web.tools.MyTools;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -34,7 +34,8 @@ public class JsonAction  extends ActionSupport {
 	private static final long serialVersionUID = -5279892367628798557L;
 	
 	private JSONArray resultTree;
-	
+	private JSONObject jsonObject;
+	private String jsonString;
 	private GupiaoDAO gupiaoDAO;
 	
 	private String gupiaodaima;
@@ -50,14 +51,25 @@ public class JsonAction  extends ActionSupport {
 	@Autowired
 	public JsonAction(GupiaoDAO gupiaoDAO){
 		this.gupiaoDAO=gupiaoDAO;
+	
 	}
 	
 	public String getGupiaodaima() {
 		return gupiaodaima;
 	}
-
+	
 
 	
+	
+
+	public JSONObject getJsonObject() {
+		return jsonObject;
+	}
+
+	public void setJsonObject(JSONObject jsonObject) {
+		this.jsonObject = jsonObject;
+	}
+
 	public void setGupiaodaima(String gupiaodaima) {
 		this.gupiaodaima = gupiaodaima;
 	}
@@ -102,15 +114,31 @@ public class JsonAction  extends ActionSupport {
 
 
 */
-	public JSONArray getResultTree() {
-		return resultTree;
-	}
-
-
+	
 
 	
+	public String getJsonString() {
+		return jsonString;
+	}
+
+	public void setJsonString(String jsonString) {
+		this.jsonString = jsonString;
+	}
+
+	public HttpServletRequest getHttpServletRequest() {
+		return httpServletRequest;
+	}
+
+	public void setHttpServletRequest(HttpServletRequest httpServletRequest) {
+		this.httpServletRequest = httpServletRequest;
+	}
+
 	public void setResultTree(JSONArray resultTree) {
 		this.resultTree = resultTree;
+	}
+
+	public JSONArray getResultTree() {
+		return resultTree;
 	}
 
 	public String getrzzgsGroupByCondition() {
@@ -123,12 +151,13 @@ public class JsonAction  extends ActionSupport {
 		
 		
 	}
-	public String getrzzgsByCondition(){//Í¨¹ýÌõ¼þ²éÑ¯
+	public String getrzzgsByCondition(){//Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¯
 		JsonConfig config = new JsonConfig();  
 		config.registerJsonValueProcessor(java.sql.Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd"));  
-	
 		
-		resultTree=JSONArray.fromObject(gupiaoDAO.getrzzgsByCondition(this.jsqbh,this.jsqbh2,this.riqi),config);
+		
+		setResultTree(JSONArray.fromObject(gupiaoDAO.getrzzgsByCondition(this.jsqbh,this.jsqbh2,this.riqi),config));
+		
 		return "success";
 		
 	}
@@ -146,9 +175,9 @@ public class JsonAction  extends ActionSupport {
 		
 		JsonConfig config = new JsonConfig();  
 		config.registerJsonValueProcessor(java.sql.Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd"));  
-	
 		
-		resultTree=JSONArray.fromObject(gupiaoDAO.getrzzgsbygupiaodaima(this.gupiaodaima),config);
+		setResultTree(JSONArray.fromObject(gupiaoDAO.getrzzgsbygupiaodaima(this.gupiaodaima),config));
+		
 		return "success";
 	}
 	public String testjson() throws Exception{
@@ -185,14 +214,56 @@ public class JsonAction  extends ActionSupport {
 				list_gupiaoshuju.add(innergupiaoshuju);
 			}
 
-			resultTree=JSONArray.fromObject(list_gupiaoshuju);  //»òÕßJSONArray jsarry=JSONArray.fromObject(list)  
+			resultTree=JSONArray.fromObject(list_gupiaoshuju);  //ï¿½ï¿½ï¿½ï¿½JSONArray jsarry=JSONArray.fromObject(list)  
 
 		  
 
 		return "success";  
 
 	}
-
-
+	public String getMonths() throws Exception{
+		resultTree=JSONArray.fromObject(gupiaoDAO.getMonths());
+		return "success";
+	}
+	public String updateRzzgsBeizhu() throws Exception{
+		
+		JSONArray array = JSONArray.fromObject(jsonString); 
+		 for (int i = 0; i < array.size(); i++)  
+	        {  
+			 jsonObject = array.getJSONObject(i); 
+			 Rzzgs rzzgs=new Rzzgs();
+			 rzzgs.setGupiaodaima(jsonObject.get("gupiaodaima").toString());
+			 rzzgs.setRiqi(MyTools.strToDateTime(jsonObject.get("riqi").toString().substring(0,10)));
+			 rzzgs.setGdzs( Double.parseDouble(jsonObject.get("gdzs").toString()));
+			 rzzgs.setRzzg( Double.parseDouble(jsonObject.get("rzzg").toString()));
+			 rzzgs.setJsqbh( Double.parseDouble(jsonObject.get("jsqbh").toString()));
+			 rzzgs.setZgb( Double.parseDouble(jsonObject.get("zgb").toString()));
+			 rzzgs.setLtg( Double.parseDouble(jsonObject.get("ltg").toString()));
+			 rzzgs.setJsqbh2( Double.parseDouble(jsonObject.get("jsqbh2").toString()));
+			 rzzgs.setJsqbh3( Double.parseDouble(jsonObject.get("jsqbh3").toString()));
+			 rzzgs.setJsqbh4( Double.parseDouble(jsonObject.get("jsqbh4").toString()));
+			 rzzgs.setJsqbh5( Double.parseDouble(jsonObject.get("jsqbh5").toString()));
+			 rzzgs.setJsqbh6( Double.parseDouble(jsonObject.get("jsqbh6").toString()));
+			 rzzgs.setGenericriqi(MyTools.strToDateTime(jsonObject.get("genericriqi").toString().substring(0,10)));
+			 rzzgs.setBeizhuriqi(new java.util.Date());
+			 rzzgs.setBeizhu(jsonObject.get("beizhu").toString());
+			 gupiaoDAO.SaveObject(rzzgs);
+	        }  
+		/*
+		 * 
+			private Double jsqbh;
+			private Double zgb;
+			private Double ltg;
+			private Double jsqbh2;
+			private Double jsqbh3;
+			private Double jsqbh4;
+			private Double jsqbh5;
+			private Double jsqbh6;
+			private Date genericriqi;
+			private Date beizhuriqi;
+			private String beizhu;
+		 */
+		return "success";
+	}
 	
 }

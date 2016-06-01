@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE struts PUBLIC
-          "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
-          "http://struts.apache.org/dtds/struts-2.0.dtd">
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
 
 <struts>
 	<constant name="struts.i18n.encoding" value="utf-8"></constant>
@@ -19,9 +19,9 @@
         </action>  
         
         <action name="JsonActiongetrzzgsbygupiaodaima"     class="jsonAction" method="getrzzgsbygupiaodaima">    
-		 	<result type="json">  
+		 	 <result type="json">  
                     <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
-            </result>          
+            </result>     
         </action>  
         
         <action name="JsonActiongetrzzgsByCondition"     class="jsonAction" method="getrzzgsByCondition">    
@@ -29,8 +29,16 @@
                     <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
             </result>          
         </action>  
-        
-        
+        <action name="JsonActiongetMonths"     class="jsonAction" method="getMonths">    
+		 	<result type="json">  
+                    <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
+            </result>          
+        </action>  
+         <action name="JsonActionupdateRzzgsBeizhu"     class="jsonAction" method="updateRzzgsBeizhu">    
+		 	<result type="json">  
+                    <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
+            </result>   
+        </action>  
         
         
      	<action name="GupiaoAction" class="gupiaoAction">     	

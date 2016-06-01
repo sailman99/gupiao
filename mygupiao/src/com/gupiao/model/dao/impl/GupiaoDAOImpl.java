@@ -1,9 +1,8 @@
 package com.gupiao.model.dao.impl;
 
 import java.sql.Connection;
-
 import java.sql.SQLException;
-
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,9 +23,11 @@ import com.gupiao.model.dao.GupiaoDAO;
 import com.gupiao.model.persist.entity.Gupiaoshuju;
 import com.gupiao.model.persist.entity.Inoutprice;
 import com.gupiao.model.persist.entity.MbcjgsjsTemporary;
+import com.gupiao.model.persist.entity.Months;
 import com.gupiao.model.persist.entity.Procedurecondition;
 import com.gupiao.model.persist.entity.RiqiGroupcounts;
 import com.gupiao.model.persist.entity.Rzzgs;
+import com.gupiao.model.persist.entity.RzzgsShow;
 import com.gupiao.model.persist.entity.Rzzgszc;
 import com.gupiao.model.persist.entity.Sendemail;
 import com.gupiao.model.persist.entity.Trendlines;
@@ -35,7 +36,7 @@ import com.example.share.Gpsclientdata;
 
 
 @Repository("gupiaoDAO")
-@Transactional(propagation=Propagation.REQUIRED,readOnly=true)
+@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
 public class GupiaoDAOImpl  implements GupiaoDAO {
 	
 	
@@ -52,7 +53,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 	public StatelessSession getStatelessSession(){
 		return this.sessionFactory.openStatelessSession();
 	}
-	@Transactional(propagation=Propagation.REQUIRED,readOnly=false)
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=false)
 	public void updateGpsclientdata(List<Gpsclientdata> list){
 		Iterator<Gpsclientdata> iter=list.iterator();
 		while(iter.hasNext()){
@@ -155,7 +156,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		return list;
 		
 	}
-	@Transactional(propagation=Propagation.REQUIRED,readOnly=false)
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=false)
 	public void deleteInoutprice(String str_gupiaodaima){
 		Session session = this.sessionFactory.getCurrentSession();
 		Inoutprice inprice =(Inoutprice)session.get(Inoutprice.class,str_gupiaodaima);
@@ -173,31 +174,31 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 	public void updateWhilework(){
 		
 		Session session = this.sessionFactory.getCurrentSession();
-			//¶¨ÒåÒ»¸öÄäÃûÀà£¬ÊµÏÖÁËWork½Ó¿Ú		
+			//ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à£¬Êµï¿½ï¿½ï¿½ï¿½Workï¿½Ó¿ï¿½		
 			Work work=new Work(){		
 				public void execute(Connection conn)throws SQLException{
-				//Í¨¹ýJDBC APIÖ´ÐÐÓÃÓÚÅúÁ¿¸üÐÂµÄSQLÓï¾ä
+				//Í¨ï¿½ï¿½JDBC APIÖ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½SQLï¿½ï¿½ï¿½
 					java.sql.CallableStatement       cstmt; 
 					cstmt = conn.prepareCall("{  call testpackage.updatewhilework}");  				
 					cstmt.execute();   						
 					cstmt.close();		
 				}
 			};
-			//Ö´ÐÐwork 
+			//Ö´ï¿½ï¿½work 
 			
 			session.doWork(work);
 	//		session.close();
 	}
 	public int getWhileworkspilttime(){
 		
-		//ÒòÕâ¹ý³ÌÊÇÔÚ¶¨Ê±¹ý³ÌÓÃ£¬¹ÊÒª
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½Òª
 		Session session = this.sessionFactory.getCurrentSession();
 	
-		//¶¨ÒåÒ»¸öÄäÃûÀà£¬ÊµÏÖÁËWork½Ó¿Ú
+		//ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à£¬Êµï¿½ï¿½ï¿½ï¿½Workï¿½Ó¿ï¿½
 		
 		Work work=new Work(){		
 			public void execute(Connection conn)throws SQLException{
-			//Í¨¹ýJDBC APIÖ´ÐÐÓÃÓÚÅúÁ¿¸üÐÂµÄSQLÓï¾ä
+			//Í¨ï¿½ï¿½JDBC APIÖ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½SQLï¿½ï¿½ï¿½
 				java.sql.CallableStatement       cstmt; 
 				cstmt = conn.prepareCall("{ ? = call getWhileworkspilttime}");   
 			    
@@ -207,7 +208,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 				cstmt.close();		
 			}
 		};
-		//Ö´ÐÐwork 
+		//Ö´ï¿½ï¿½work 
 		
 		session.doWork(work);		
 	//	session.flush();
@@ -221,11 +222,11 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		
 		
 		Session session = this.sessionFactory.getCurrentSession();
-		//¶¨ÒåÒ»¸öÄäÃûÀà£¬ÊµÏÖÁËWork½Ó¿Ú
+		//ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à£¬Êµï¿½ï¿½ï¿½ï¿½Workï¿½Ó¿ï¿½
 		
 		Work work=new Work(){		
 			public void execute(Connection conn)throws SQLException{
-			//Í¨¹ýJDBC APIÖ´ÐÐÓÃÓÚÅúÁ¿¸üÐÂµÄSQLÓï¾ä
+			//Í¨ï¿½ï¿½JDBC APIÖ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½SQLï¿½ï¿½ï¿½
 				java.sql.CallableStatement       cstmt; 
 				cstmt = conn.prepareCall("{ ? = call testpackage.getrzzgsfenxi(?)}");   			    
 				cstmt.registerOutParameter(1,java.sql.Types.INTEGER);   
@@ -235,7 +236,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 				cstmt.close();		
 			}
 		};
-		//Ö´ÐÐwork 
+		//Ö´ï¿½ï¿½work 
 		
 		session.doWork(work);		
 	//	session.close();
@@ -258,7 +259,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		return list;
 		
 	}
-	@Transactional(propagation=Propagation.REQUIRED,readOnly=false)
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=false)
 	public void SaveObject(Object k) {
 		// TODO Auto-generated method stub
 		Session session = this.sessionFactory.getCurrentSession();
@@ -279,25 +280,31 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
         return list;
 	}
 	
-	public List<Rzzgs> getrzzgsByCondition(Double jsqbh,Double jsqbh2,String riqi) {
-		//Session session=this.sessionFactory.getCurrentSession();
-		StatelessSession session=getStatelessSession();
-		Query query = session.createSQLQuery("select * from Rzzgs where jsqbh>=:v_jsqbh and jsqbh2>=:v_jsqbh2 and riqi=:v_riqi").addEntity(Rzzgs.class);
+	public List<RzzgsShow> getrzzgsByCondition(Double jsqbh,Double jsqbh2,String riqi) {
+		Session session=this.sessionFactory.getCurrentSession();
+		//	StatelessSession session=getStatelessSession();
+		
+		Query query = session.createSQLQuery(" select a.gupiaodaima,b.gupiaomingcheng,a.riqi,"+
+		"a.gdzs,a.rzzg,a.jsqbh,a.zgb,a.ltg,a.jsqbh2,to_char(a.genericriqi,'yyyy-MM-dd') genericriqi,to_char(a.beizhuriqi,'yyyy-MM-dd') beizhuriqi,a.beizhu "+
+		"		from rzzgs a,gupiao b where a.gupiaodaima=b.gupiaodaima "+		
+        "  and a.jsqbh>=:v_jsqbh and a.jsqbh2>=:v_jsqbh2 and a.riqi=:v_riqi").addEntity(RzzgsShow.class);
 		query.setParameter("v_jsqbh", jsqbh);
 		query.setParameter("v_jsqbh2", jsqbh2);
 		query.setParameter("v_riqi",MyTools.strToDateTime(riqi));
-		List<Rzzgs> list=query.list();		
-		session.close();
+		List<RzzgsShow> list=query.list();
+		
         return list;
 	}
-	public List<Rzzgs> getrzzgsbygupiaodaima(String gupiaodaima){
-
-		StatelessSession session=getStatelessSession();
-		Query query = session.createSQLQuery("select * from Rzzgs where gupiaodaima=:v_gupiaodaima order by riqi desc").addEntity(Rzzgs.class);
-		query.setParameter("v_gupiaodaima", gupiaodaima);
-		List<Rzzgs> list=query.list();
+	public List<RzzgsShow> getrzzgsbygupiaodaima(String gupiaodaima){
 		
-		session.close();
+		Session session=this.sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery(" select a.gupiaodaima,b.gupiaomingcheng,a.riqi,"+
+				"a.gdzs,a.rzzg,a.jsqbh,a.zgb,a.ltg,a.jsqbh2,to_char(a.genericriqi,'yyyy-MM-dd') genericriqi,to_char(a.beizhuriqi,'yyyy-MM-dd') beizhuriqi,a.beizhu "+
+				"		from rzzgs a,gupiao b where a.gupiaodaima=b.gupiaodaima "+		
+		        "  and a.gupiaodaima=:v_gupiaodaima order by a.riqi desc").addEntity(RzzgsShow.class);
+				query.setParameter("v_gupiaodaima", gupiaodaima);
+		List<RzzgsShow> list=query.list();
+		
         return list;
 	}
 	public List<Rzzgs> getrzzgsbyjsqbhandjsqbh2(Double jsqbh,Double jsqbh2){
@@ -317,5 +324,10 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		session.close();
         return list;
 	}
-	
+	public List<Months> getMonths(){
+		
+		Session session=this.sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery("select to_char(riqi,'yyyy-mm-dd')  month from rzzgs where riqi>sysdate-750 group by riqi  order by riqi desc").addEntity(Months.class);
+		return query.list();		
+	}
 }
