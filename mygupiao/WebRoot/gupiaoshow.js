@@ -33,7 +33,7 @@ Ext.onReady(function(){
         collapsible : true,
         split : true,
         width : 170,
-        layout:{
+       layout:{
         	type:'vbox',
         	align:'center'
         },

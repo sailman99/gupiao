@@ -49,7 +49,7 @@
 		<!-- 映射文件 -->
 			<property name="mappingResources">
 			<list>
-			<value>com/gupiao/model/persist/entity/OracleProreduces.hbm.xml</value>                
+			<value>/com/gupiao/model/persist/entity/OracleProreduces.hbm.xml</value>                
 			</list>
 			</property> 
 		<property name="packagesToScan"><!-- 影射实体类 -->

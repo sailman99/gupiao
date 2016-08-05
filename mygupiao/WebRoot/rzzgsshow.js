@@ -158,7 +158,7 @@ mystorea.on('load',function(parent, records, successful, operation, eOpts){
 		}
 });
 var westForm=Ext.create('Ext.form.FormPanel', {
-	    title      : 'Sample TextArea',
+	   
 	    id:'mainwestForm',
 	    width      : 160,
 	    bodyPadding: 10,

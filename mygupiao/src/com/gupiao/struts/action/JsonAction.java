@@ -16,9 +16,12 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.gupiao.model.dao.GupiaoDAO;
+import com.gupiao.model.persist.entity.Cycwarm;
 import com.gupiao.model.persist.entity.Gupiaoshuju;
 import com.gupiao.model.persist.entity.JsonGupiaoshuju;
 import com.gupiao.model.persist.entity.Rzzgs;
+import com.gupiao.model.persist.entity.Scalewarm;
+import com.gupiao.model.persist.entity.Trendlines;
 import com.gupiao.web.tools.DateJsonValueProcessor;
 import com.gupiao.web.tools.MyTools;
 
@@ -225,6 +228,81 @@ public class JsonAction  extends ActionSupport {
 		resultTree=JSONArray.fromObject(gupiaoDAO.getMonths());
 		return "success";
 	}
+	public String updateTrendlines() throws Exception{
+		
+		JSONArray array = JSONArray.fromObject(jsonString);
+		for(int i=0;i<array.size();i++){
+			JSONObject jsonObject = array.getJSONObject(i);
+			Trendlines trendlines= new Trendlines();
+			trendlines.setGupiaodaima(jsonObject.get("gupiaodaima").toString());
+			trendlines.setRiqi1(MyTools.strToDateTime(jsonObject.get("riqi1").toString().substring(0,10)));
+			trendlines.setRiqi2(MyTools.strToDateTime(jsonObject.get("riqi2").toString().substring(0,10)));
+			trendlines.setRiqi3(MyTools.strToDateTime(jsonObject.get("riqi3").toString().substring(0,10)));
+			trendlines.setDot1(Double.parseDouble(jsonObject.get("dot1").toString()));
+			trendlines.setDot2(Double.parseDouble(jsonObject.get("dot2").toString()));
+			trendlines.setDot3(Double.parseDouble(jsonObject.get("dot3").toString()));
+			trendlines.setUpordown(jsonObject.get("upordown").toString());
+			trendlines.setDot1todot2(gupiaoDAO.getTrendlinesriqicount(trendlines.getGupiaodaima(),trendlines.getRiqi1(),trendlines.getRiqi2()));
+			trendlines.setGradient((trendlines.getDot2()-trendlines.getDot1())/trendlines.getDot1todot2());
+			Double riqicount=gupiaoDAO.getTrendlinesriqicount(trendlines.getGupiaodaima(),trendlines.getRiqi3(),new Date())+0.00;
+			trendlines.setForecastprice(trendlines.getDot3()+riqicount*trendlines.getGradient());
+			gupiaoDAO.SaveObject(trendlines);
+		}
+		
+		JSONObject jsObject = new JSONObject();
+		jsObject.put("success", true);
+		jsObject.put("msg","数据更新成功！");
+		setJsonObject(jsObject);
+		
+		return "success";
+
+	}
+	public String updateScalewarmBeizhu() throws Exception{
+		JSONArray array = JSONArray.fromObject(jsonString); 
+		 for (int i = 0; i < array.size(); i++)  
+	        {  
+			 jsonObject = array.getJSONObject(i); 
+			 Scalewarm scalewarm = new Scalewarm();
+			 scalewarm.setGupiaodaima(jsonObject.get("gupiaodaima").toString());
+			 scalewarm.setZuidiriqi(MyTools.strToDateTime(jsonObject.get("zuidiriqi").toString().substring(0,10)));
+			 scalewarm.setScale( Double.parseDouble(jsonObject.get("scale").toString()));
+			 scalewarm.setZuidijia( Double.parseDouble(jsonObject.get("zuidijia").toString()));
+			 scalewarm.setZuigaoriqi(MyTools.strToDateTime(jsonObject.get("zuigaoriqi").toString().substring(0,10)));
+			 scalewarm.setZuigaojia( Double.parseDouble(jsonObject.get("zuigaojia").toString()));
+			 scalewarm.setJiage( Double.parseDouble(jsonObject.get("jiage").toString()));
+			 if(jsonObject.get("riqi").toString().length()>9){
+				 scalewarm.setRiqi(MyTools.strToDateTime(jsonObject.get("riqi").toString().substring(0,10)));
+			 }
+			 scalewarm.setBeizhu(jsonObject.get("beizhu").toString());
+			 scalewarm.setBeizhuriqi(new java.util.Date());
+			 gupiaoDAO.SaveObject(scalewarm);
+	        }  
+		
+		return "success";
+	}
+	
+	public String updateCycwarmBeizhu() throws Exception{
+		JSONArray array = JSONArray.fromObject(jsonString); 
+		 for (int i = 0; i < array.size(); i++)  
+	        {  
+			 jsonObject = array.getJSONObject(i); 
+			 Cycwarm cycwarm = new Cycwarm();
+			 cycwarm.setGupiaodaima(jsonObject.get("gupiaodaima").toString());
+			 cycwarm.setRiqi(MyTools.strToDateTime(jsonObject.get("riqi").toString().substring(0,10)));
+			 cycwarm.setCyc( Integer.parseInt(jsonObject.get("cyc").toString()));
+			 cycwarm.setJiage( Double.parseDouble(jsonObject.get("jiage").toString()));
+			 if(jsonObject.get("comeriqi").toString().length()>9){
+				 cycwarm.setComeriqi(MyTools.strToDateTime(jsonObject.get("comeriqi").toString().substring(0,10)));
+			 }
+			 cycwarm.setBeizhu(jsonObject.get("beizhu").toString());
+			 cycwarm.setBeizhuriqi(new java.util.Date());
+			 
+			 
+			 gupiaoDAO.SaveObject(cycwarm);
+	        }  
+		
+		return "success";
+	}
 	public String updateRzzgsBeizhu() throws Exception{
 		
 		JSONArray array = JSONArray.fromObject(jsonString); 
@@ -245,24 +323,77 @@ public class JsonAction  extends ActionSupport {
 			 rzzgs.setJsqbh5( Double.parseDouble(jsonObject.get("jsqbh5").toString()));
 			 rzzgs.setJsqbh6( Double.parseDouble(jsonObject.get("jsqbh6").toString()));
 			 rzzgs.setGenericriqi(MyTools.strToDateTime(jsonObject.get("genericriqi").toString().substring(0,10)));
-			 rzzgs.setBeizhuriqi(new java.util.Date());
+			 rzzgs.setBeizhuriqi(MyTools.strToDateTime((new SimpleDateFormat("yyyy-MM-dd")).format(new java.util.Date())));
 			 rzzgs.setBeizhu(jsonObject.get("beizhu").toString());
+			 if("true".equals(jsonObject.get("cyc55").toString())){
+				Cycwarm cycwarm=new Cycwarm();
+				cycwarm.setGupiaodaima(rzzgs.getGupiaodaima());
+				cycwarm.setRiqi(MyTools.strToDateTime((new SimpleDateFormat("yyyy-MM-dd")).format(new java.util.Date())));
+				cycwarm.setCyc(55);
+				gupiaoDAO.SaveObject(cycwarm);
+				gupiaoDAO.generic_updatecycwarm();
+			 }
+			 if("true".equals(jsonObject.get("cyc125").toString())){
+					Cycwarm cycwarm=new Cycwarm();
+					cycwarm.setGupiaodaima(rzzgs.getGupiaodaima());
+					cycwarm.setRiqi(MyTools.strToDateTime((new SimpleDateFormat("yyyy-MM-dd")).format(new java.util.Date())));
+					cycwarm.setCyc(125);
+					gupiaoDAO.SaveObject(cycwarm);
+					gupiaoDAO.generic_updatecycwarm();
+			 }
+			 if("true".equals(jsonObject.get("cyc250").toString())){
+					Cycwarm cycwarm=new Cycwarm();
+					cycwarm.setGupiaodaima(rzzgs.getGupiaodaima());
+					cycwarm.setRiqi(MyTools.strToDateTime((new SimpleDateFormat("yyyy-MM-dd")).format(new java.util.Date())));
+					cycwarm.setCyc(250);
+					gupiaoDAO.SaveObject(cycwarm);
+					gupiaoDAO.generic_updatecycwarm();
+			} 
+			 if("true".equals(jsonObject.get("down50").toString())){
+				    gupiaoDAO.updateScalewarm(rzzgs.getGupiaodaima(),new Double(0.5),MyTools.strToDateTime(jsonObject.get("minriqi").toString().substring(0,10)));
+			 }
+			 if("true".equals(jsonObject.get("down618").toString())){
+				    gupiaoDAO.updateScalewarm(rzzgs.getGupiaodaima(),new Double(0.618),MyTools.strToDateTime(jsonObject.get("minriqi").toString().substring(0,10)));
+			 }
+			 if("true".equals(jsonObject.get("down732").toString())){
+				    gupiaoDAO.updateScalewarm(rzzgs.getGupiaodaima(),new Double(0.732),MyTools.strToDateTime(jsonObject.get("minriqi").toString().substring(0,10)));
+			 }
 			 gupiaoDAO.SaveObject(rzzgs);
 	        }  
-		/*
-		 * 
-			private Double jsqbh;
-			private Double zgb;
-			private Double ltg;
-			private Double jsqbh2;
-			private Double jsqbh3;
-			private Double jsqbh4;
-			private Double jsqbh5;
-			private Double jsqbh6;
-			private Date genericriqi;
-			private Date beizhuriqi;
-			private String beizhu;
-		 */
+		
+		return "success";
+	}
+	public String getTrendlines(){
+		JsonConfig config = new JsonConfig();  
+		config.registerJsonValueProcessor(java.sql.Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd"));  
+		
+		setResultTree(JSONArray.fromObject(gupiaoDAO.getTrendlines(),config));
+		
+		return "success";
+	}
+	public String getTrendlinestmp(){
+		JsonConfig config = new JsonConfig();  
+		config.registerJsonValueProcessor(java.sql.Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd"));  
+		
+		setResultTree(JSONArray.fromObject(gupiaoDAO.getTrendlinestmp(),config));
+		
+		return "success";
+	}
+	
+	public String getCycwarmtmp(){
+		JsonConfig config = new JsonConfig();  
+		config.registerJsonValueProcessor(java.sql.Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd"));  
+		
+		setResultTree(JSONArray.fromObject(gupiaoDAO.getCycwarmtmp(),config));
+		
+		return "success";
+	}
+	public String getScalewarmtmp(){
+		JsonConfig config = new JsonConfig();  
+		config.registerJsonValueProcessor(java.sql.Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd"));  
+		
+		setResultTree(JSONArray.fromObject(gupiaoDAO.getScalewarmtmp(),config));
+		
 		return "success";
 	}
 	

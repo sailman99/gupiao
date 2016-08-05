@@ -6,9 +6,9 @@
 	
 	<bean id="taskJob" class="com.gupiao.web.tools.TaskJob_new" >
 		<property name="gupiaoDAO" ref="gupiaoDAO" />
-		<property name="myprotocolhandler" ref="myHandler" />		
+		<!-- <property name="myprotocolhandler" ref="myHandler" />		
 		<property name="jmsTemplate" ref="myJmsTemplate" />
-		<property name="aMQTopic"    ref="topicDestination" />
+		<property name="aMQTopic"    ref="topicDestination" /> -->
 	</bean>
 
     <bean id="methodInvokingJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">

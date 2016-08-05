@@ -116,6 +116,106 @@ public class Trendlines implements java.io.Serializable {
 	public void setUpordown(String upordown) {
 		this.upordown = upordown;
 	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((dot1 == null) ? 0 : dot1.hashCode());
+		result = prime * result
+				+ ((dot1todot2 == null) ? 0 : dot1todot2.hashCode());
+		result = prime * result + ((dot2 == null) ? 0 : dot2.hashCode());
+		result = prime * result + ((dot3 == null) ? 0 : dot3.hashCode());
+		result = prime * result + ((dot4 == null) ? 0 : dot4.hashCode());
+		result = prime * result
+				+ ((forecastprice == null) ? 0 : forecastprice.hashCode());
+		result = prime * result
+				+ ((gradient == null) ? 0 : gradient.hashCode());
+		result = prime * result
+				+ ((gupiaodaima == null) ? 0 : gupiaodaima.hashCode());
+		result = prime * result + ((riqi1 == null) ? 0 : riqi1.hashCode());
+		result = prime * result + ((riqi2 == null) ? 0 : riqi2.hashCode());
+		result = prime * result + ((riqi3 == null) ? 0 : riqi3.hashCode());
+		result = prime * result + ((riqi4 == null) ? 0 : riqi4.hashCode());
+		result = prime * result
+				+ ((upordown == null) ? 0 : upordown.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Trendlines other = (Trendlines) obj;
+		if (dot1 == null) {
+			if (other.dot1 != null)
+				return false;
+		} else if (!dot1.equals(other.dot1))
+			return false;
+		if (dot1todot2 == null) {
+			if (other.dot1todot2 != null)
+				return false;
+		} else if (!dot1todot2.equals(other.dot1todot2))
+			return false;
+		if (dot2 == null) {
+			if (other.dot2 != null)
+				return false;
+		} else if (!dot2.equals(other.dot2))
+			return false;
+		if (dot3 == null) {
+			if (other.dot3 != null)
+				return false;
+		} else if (!dot3.equals(other.dot3))
+			return false;
+		if (dot4 == null) {
+			if (other.dot4 != null)
+				return false;
+		} else if (!dot4.equals(other.dot4))
+			return false;
+		if (forecastprice == null) {
+			if (other.forecastprice != null)
+				return false;
+		} else if (!forecastprice.equals(other.forecastprice))
+			return false;
+		if (gradient == null) {
+			if (other.gradient != null)
+				return false;
+		} else if (!gradient.equals(other.gradient))
+			return false;
+		if (gupiaodaima == null) {
+			if (other.gupiaodaima != null)
+				return false;
+		} else if (!gupiaodaima.equals(other.gupiaodaima))
+			return false;
+		if (riqi1 == null) {
+			if (other.riqi1 != null)
+				return false;
+		} else if (!riqi1.equals(other.riqi1))
+			return false;
+		if (riqi2 == null) {
+			if (other.riqi2 != null)
+				return false;
+		} else if (!riqi2.equals(other.riqi2))
+			return false;
+		if (riqi3 == null) {
+			if (other.riqi3 != null)
+				return false;
+		} else if (!riqi3.equals(other.riqi3))
+			return false;
+		if (riqi4 == null) {
+			if (other.riqi4 != null)
+				return false;
+		} else if (!riqi4.equals(other.riqi4))
+			return false;
+		if (upordown == null) {
+			if (other.upordown != null)
+				return false;
+		} else if (!upordown.equals(other.upordown))
+			return false;
+		return true;
+	}
 		
 
 	

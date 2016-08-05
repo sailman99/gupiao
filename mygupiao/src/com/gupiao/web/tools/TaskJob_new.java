@@ -23,8 +23,12 @@ import org.springframework.jms.core.MessageCreator;
 
 
 
+
+
 import com.gupiao.model.dao.GupiaoDAO;
+import com.gupiao.model.persist.entity.Cycwarm;
 import com.gupiao.model.persist.entity.Inoutprice;
+import com.gupiao.model.persist.entity.Scalewarm;
 import com.gupiao.model.persist.entity.Sendemail;
 import com.gupiao.model.persist.entity.Trendlines;
 import com.gupiao.socket.MyProtocolHandler;
@@ -33,18 +37,18 @@ public class TaskJob_new{
 	
 		private GupiaoDAO gupiaoDAO;
 		
-		private MyProtocolHandler myprotocolhandler;
+	//	private MyProtocolHandler myprotocolhandler;
 		
-		private SendEmailByQQ sendEmailByQQ=new SendEmailByQQ();
+	//	private SendEmailByQQ sendEmailByQQ=new SendEmailByQQ();
 
 		private SimpleDateFormat sdf;//
-		private org.apache.activemq.command.ActiveMQTopic aMQTopic;
-		private org.springframework.jms.core.JmsTemplate jmsTemplate;
+	//	private org.apache.activemq.command.ActiveMQTopic aMQTopic;
+	//	private org.springframework.jms.core.JmsTemplate jmsTemplate;
 	//	private boolean sendemailcondition=false;	
-		private String str_msg,str_seilout,str_seilin;
+		private String str_msg,str_seilout,str_seilin,str_cycwarm,str_scalewarm;
 		
 		public SimpleDateFormat getSdf() {
-			//return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.CHINA); //±¾µØÊ±¼ä¸ñÊ½
+			//return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.CHINA); //
 			SimpleDateFormat sim=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			sim.setTimeZone(TimeZone.getDefault());
 			return sim;	
@@ -53,26 +57,27 @@ public class TaskJob_new{
 		public void setGupiaoDAO(GupiaoDAO gupiaoDAO) {
 			this.gupiaoDAO = gupiaoDAO;
 		}
-		
+		/*
 		public void setMyprotocolhandler(MyProtocolHandler myprotocolhandler) {
 			this.myprotocolhandler = myprotocolhandler;
 		}
-
-		
+		*/
+		/*
 		public void setJmsTemplate(org.springframework.jms.core.JmsTemplate jmsTemplate) {
 			this.jmsTemplate = jmsTemplate;
 		}
 		public void setaMQTopic(org.apache.activemq.command.ActiveMQTopic aMQTopic) {
 			this.aMQTopic = aMQTopic;
 		}
-
+		 */
+		/*
 		public void TestJMS(){
 			
 			
 			
 			UUID uuid=UUID.randomUUID();
 	    		sdf=this.getSdf();
-	    		final String str_temp=String.valueOf(uuid)+"@#@Êı¾İ²âÊÔ@#@"+sdf.format(System.currentTimeMillis())+"Êı¾İ²âÊÔ"+"@#@author@#@"+sdf.format(System.currentTimeMillis()); 
+	    		final String str_temp=String.valueOf(uuid)+"@#@ï¿½ï¿½İ²ï¿½ï¿½ï¿½@#@"+sdf.format(System.currentTimeMillis())+"ï¿½ï¿½İ²ï¿½ï¿½ï¿½"+"@#@author@#@"+sdf.format(System.currentTimeMillis()); 
 	   
 	    		jmsTemplate.send(aMQTopic, new MessageCreator() {  
 	  	            public Message createMessage(Session session) throws JMSException {   
@@ -86,18 +91,18 @@ public class TaskJob_new{
 	  	            }  
 	  	        });  
 		
-		}
+		}*/
 	//	public static Logger log = Logger.getLogger(TaskJob.class);
 	  /*  public void SayHello() {
 	              // TODO Auto-generated method stub
 	              try {
-	                     log.info("´¦ÀíÈÎÎñ¿ªÊ¼>........");
-	                     // ÒµÎñÂß¼­´úÂëµ÷ÓÃ
-	                     System.out.println("Ê±¼ä[" + new java.util.Date().toLocaleString()
-	                                   + "]----->´ó¼ÒºÃ°¡£¡");
-	                     log.info("´¦ÀíÈÎÎñ½áÊø!");
+	                     log.info("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼>........");
+	                     // Òµï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	                     System.out.println("Ê±ï¿½ï¿½[" + new java.util.Date().toLocaleString()
+	                                   + "]----->ï¿½ï¿½ÒºÃ°ï¿½ï¿½ï¿½");
+	                     log.info("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½!");
 	              } catch (Exception e) {
-	                     log.error("´¦ÀíÈÎÎñ³öÏÖÒì³£", e);
+	                     log.error("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ì³£", e);
 	              }
 	    }
 	       */
@@ -105,16 +110,16 @@ public class TaskJob_new{
 	      
 	   /*
 	    * var hq_str_sz000001=
-	    * 0  "Æ½°²ÒøĞĞ,
-	    * 1  14.06,¿ªÅÌ¼Û
+	    * 0  "Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,
+	    * 1  14.06,ï¿½ï¿½ï¿½Ì¼ï¿½
 	    * 2  14.07,
-	    * 3  13.99,ÊÕÅÌ¼Û
-	    * 4  14.16,×î¸ß¼Û
-	    * 5  13.96,×îµÍ¼Û
-	    * 6  13.98,ÊÕÅÌ¼Û
-	    * 7  13.99,Âô³ö¼Û
-	    * 8  79357014,×ÜÁ¿
-	    * 9  1115146052.80,³É½»½ğ¶î
+	    * 3  13.99,ï¿½ï¿½ï¿½Ì¼ï¿½
+	    * 4  14.16,ï¿½ï¿½ß¼ï¿½
+	    * 5  13.96,ï¿½ï¿½Í¼ï¿½
+	    * 6  13.98,ï¿½ï¿½ï¿½Ì¼ï¿½
+	    * 7  13.99,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	    * 8  79357014,ï¿½ï¿½ï¿½ï¿½
+	    * 9  1115146052.80,ï¿½É½ï¿½ï¿½ï¿½ï¿½
 	    * 10 356712,
 	    * 11 13.98,
 	    * 12 265727,
@@ -129,7 +134,7 @@ public class TaskJob_new{
 	    */
 
 
-		public void manipulation_data(List<Inoutprice> inoutprice_list,List<Trendlines> trendlines_list,String tempurl) throws Exception{
+		public void manipulation_data(List<Inoutprice> inoutprice_list,List<Trendlines> trendlines_list,List<Cycwarm> cycwarm_list,List<Scalewarm> scalewarm_list,String tempurl) throws Exception{
 	    	   
 	    	   	String[] sinajs;
 	    		
@@ -146,68 +151,83 @@ public class TaskJob_new{
 						hashmapkey=sinashuju[i].substring(i_position+6,i_position+12);
 						sinajs=sinashuju[i].split(",");
 						if(sinajs.length>6){
-							
-							/*
-							 * Âô³ö¹ÉÆ±ÅĞ¶Ï,×î¸ß¼Û´óÓÚÉè¶¨¼Û,×î¸ß¼ÛÔÚµÚÎåÏîsinajs[4],inoutprice.leixin='0'
-							 */
-							if(!inoutprice_list.isEmpty()){
-								Iterator<Inoutprice> iter_inoutprice=inoutprice_list.iterator();
-								while(iter_inoutprice.hasNext()){
-									Inoutprice inoutprice=(Inoutprice)iter_inoutprice.next();
-									if(inoutprice.getGupiaodaima().equals(hashmapkey)){
-										if("0".equals(inoutprice.getLeixin())){
-											if(MyTools.StrToDouble(sinajs[4])>=inoutprice.getPrice()){
-												this.str_seilout=this.str_seilout+hashmapkey+"Âô³ö,";	
+							//åˆ¤æ–­è‚¡ä»·æ˜¯å¦è¾¾åˆ°å–å‡ºä¹°å…¥ä»·
+							for(Inoutprice inoutprice:inoutprice_list){
+								if(inoutprice.getGupiaodaima().equals(hashmapkey)){
+									if("0".equals(inoutprice.getLeixin())){
+										if(MyTools.StrToDouble(sinajs[4])>=inoutprice.getPrice()){
+											this.str_seilout=this.str_seilout+hashmapkey+",";	
+											gupiaoDAO.deleteInoutprice(hashmapkey);
+										}
+									}	
+								
+									else{
+										if(inoutprice.getPrice()>0){
+											if(MyTools.StrToDouble(sinajs[5])<=inoutprice.getPrice()&&MyTools.StrToDouble(sinajs[5])>0){											
+												this.str_seilin=this.str_seilin+hashmapkey+","+inoutprice.getPrice();
 												gupiaoDAO.deleteInoutprice(hashmapkey);
 											}
-										}	
-									
-										else{
-											/*
-											 * ÂòÈë¹ÉÆ±ÅĞ¶Ï,µ±Ç°¼ÛĞ¡ÓÚÉè¶¨¼Û,µ±Ç°¼ÛÔÚµÚÁùÏîsinajs[5],inoutprice.leixin='1',Èç¹ûoutprice.price=0,È¡¶ÔÓ¦¹ÉÆ±µÄ×îĞÂcyc13Öµ£¬Èç¹û´óÓÚ0£¬±È½Ïµ±Ç°Öµ¡£
-											 */
-											if(inoutprice.getPrice()>0){
-												if(MyTools.StrToDouble(sinajs[5])<=inoutprice.getPrice()&&MyTools.StrToDouble(sinajs[5])>0){											
-													this.str_seilin=this.str_seilin+hashmapkey+"ÂôÈë,¼Û¸ñ£º"+inoutprice.getPrice();
-													gupiaoDAO.deleteInoutprice(hashmapkey);
-												}
-											}
 										}
+									}
+								}	
+							}
+							//åˆ¤æ–­è‚¡ä»·ç©¿è¶Šè¶‹åŠ¿çº¿
+							for(Trendlines trendlines:trendlines_list){
+								if(hashmapkey.equals(trendlines.getGupiaodaima())){	
+									if("1".equals(trendlines.getUpordown())){//è‚¡ä»·ç”±ä¸‹å‘ä¸Šçªç ´è¶‹åŠ¿çº¿
+										/*
+										 * sinajs[4]çš„å½“å¤©æœ€é«˜ä»·æ ¼
+										 */
+										if(trendlines.getForecastprice()<=MyTools.StrToDouble(sinajs[4]) && MyTools.StrToDouble(sinajs[4])>0){
+		   									
+		   									this.str_msg=this.str_msg + hashmapkey+"ä»Šå¤©æœ€é«˜è‚¡ä»·æ˜¯ï¼š"+sinajs[4]+"å‘ä¸Šçªç ´è¶‹åŠ¿çº¿ï¼ŒåŸå®šçš„ä»·æ ¼æ˜¯ï¼š"+trendlines.getForecastprice();	   									  			   								
+		   									trendlines.setRiqi4(new Date());
+		   									trendlines.setDot4(MyTools.StrToDouble(sinajs[4]));
+		   									gupiaoDAO.SaveObject(trendlines);		   						
+		   								}	
+									}
+									else{
+										/*
+										 * sinajs[5]å½“å¤©æœ€ä½ä»·æ ¼ï¼Œè‚¡ä»·è·Œç ´é¢„å®šä»·æ ¼
+										 */
+		   								if(trendlines.getForecastprice()>=MyTools.StrToDouble(sinajs[5]) && MyTools.StrToDouble(sinajs[5])>0){
+		   									
+		   									this.str_msg=this.str_msg + hashmapkey+"ä»Šå¤©æœ€ä½ä»·æ ¼æ˜¯ï¼š"+sinajs[5]+"å‘ä¸‹è·Œç ´è¶‹åŠ¿çº¿,åŸå®šçš„ä»·æ ¼æ˜¯ï¼š"+trendlines.getForecastprice();	   									  
+		   									trendlines.setRiqi4(new Date());
+		   									trendlines.setDot4(MyTools.StrToDouble(sinajs[3]));
+		   									gupiaoDAO.SaveObject(trendlines);		   						
+		   								}	
 									}
 								}
 							}
-							if(!trendlines_list.isEmpty()){
-								Iterator<Trendlines> trendlines_iter=trendlines_list.iterator();
-								while(trendlines_iter.hasNext()){
-									Trendlines trendlines = trendlines_iter.next();
-									if(hashmapkey.equals(trendlines.getGupiaodaima())){	
-										if("1".equals(trendlines.getUpordown())){
-											/*
-											 * ÏòÉÏÍ»ÆÆÇ÷ÊÆÏß,µ±Ç°¼Û´óÓÚÉè¶¨¼Û,µ±Ç°¼ÛÔÚµÚÎåÏîsinajs[4]
-											 */
-											if(trendlines.getForecastprice()<=MyTools.StrToDouble(sinajs[4]) && MyTools.StrToDouble(sinajs[4])>0){
-			   									
-			   									this.str_msg=this.str_msg + hashmapkey+"×î¸ß¼Û¸ñÎª"+sinajs[4]+"´óÓÚÉè¶¨Öµ"+trendlines.getForecastprice();	   									  			   								
-			   									trendlines.setRiqi4(new Date());
-			   									trendlines.setDot4(MyTools.StrToDouble(sinajs[4]));
-			   									gupiaoDAO.SaveObject(trendlines);		   						
-			   								}	
-										}
-										else{
-											/*
-											 * ÏòÏÂÍ»ÆÆÇ÷ÊÆÏß,µ±Ç°¼ÛĞ¡ÓÚÉè¶¨¼Û,µ±Ç°¼ÛÔÚµÚÁùÏîsinajs[5]
-											 */
-			   								if(trendlines.getForecastprice()>=MyTools.StrToDouble(sinajs[5]) && MyTools.StrToDouble(sinajs[5])>0){
-			   									
-			   									this.str_msg=this.str_msg + hashmapkey+"×îµÍ¼Û¸ñÎª"+sinajs[5]+"Ğ¡ÓÚÉè¶¨Öµ"+trendlines.getForecastprice();	   									  
-			   									trendlines.setRiqi4(new Date());
-			   									trendlines.setDot4(MyTools.StrToDouble(sinajs[3]));
-			   									gupiaoDAO.SaveObject(trendlines);		   						
-			   								}	
+							
+							//åˆ¤æ–­è‚¡ä»·æ˜¯å¦è·Œåˆ°EXPMAçº¿
+							for(Cycwarm cycwarm:cycwarm_list){
+								if(cycwarm.getGupiaodaima().equals(hashmapkey)){
+									if(cycwarm.getJiage()>0){
+										if(MyTools.StrToDouble(sinajs[5])<=cycwarm.getJiage()&&MyTools.StrToDouble(sinajs[5])>0){											
+											this.str_cycwarm=this.str_cycwarm+hashmapkey+","+cycwarm.getJiage();
+											cycwarm.setComeriqi(new Date());
+											gupiaoDAO.SaveObject(cycwarm);
 										}
 									}
-								}
+								}	
 							}
+							
+							
+							//åˆ¤æ–­è‚¡ä»·æ˜¯å¦è¾¾åˆ°é»„é‡‘æ¯”ä¾‹ä»·
+							for(Scalewarm scalewarm:scalewarm_list){
+								if(scalewarm.getGupiaodaima().equals(hashmapkey)){
+									if(scalewarm.getJiage()>0){
+										if(MyTools.StrToDouble(sinajs[5])<=scalewarm.getJiage()&&MyTools.StrToDouble(sinajs[5])>0){											
+											this.str_scalewarm=this.str_scalewarm+hashmapkey+","+scalewarm.getJiage();
+											scalewarm.setRiqi(new Date());
+											gupiaoDAO.SaveObject(scalewarm);
+										}
+									}
+								}	
+							}
+							
 						}
 					}
 				}
@@ -222,82 +242,110 @@ public class TaskJob_new{
 	    		
 	    		this.str_seilout="";
 	    		this.str_seilin="";
+	    		this.str_scalewarm="";
+	    		this.str_cycwarm="";
 	    		
 	    	    int i_count = 0;
 	    	    HashMap<String,Inoutprice> inoutpricehashmap=new HashMap<String,Inoutprice>();	    	  
 	    	    HashMap<String,Trendlines> trendlineshashmap = new HashMap<String,Trendlines>();
+	    	    HashMap<String,Cycwarm>    cycwarmhashmap= new HashMap<String,Cycwarm>();
+	    	    HashMap<String,Scalewarm>  scalewarmhashmap= new HashMap<String,Scalewarm>();
 	    	    Set<String> gupiaodaimaSet = new HashSet<String>();  
 	    	    
 	    	
 	    	   
-	    	    if(gupiaoDAO.getWhileworkspilttime()==1)
-	    	    {
-	    	    	/*if ("0".equals(gupiaoDAO.getprocedurecondition("1")))//²ÎÊı1ÊÇÕâ¸ö³ÌĞòµÄ±êÊ¾,ÆäËû³ÌĞò¿ÉÄÜÓÃµ½2,3,4...,·µ»Ø"0"¾Í·¢ËÍÓÊ¼ş,·µ»ØÆäËû²»·¢ËÍÓÊ¼ş
-	    	    		sendemailcondition=true;
-	    	    	else
-	    	    		sendemailcondition=false;
+	    	   // if(gupiaoDAO.getWhileworkspilttime()==1)
+	    	    {   //è·Œç ´æˆ–å‡ç ´æŸä¸€è¶‹åŠ¿çº¿æ—¶é¢„è­¦
+	    	    	List<Trendlines> trendlines_list=gupiaoDAO.getTrendlines();
 	    	    	
+		    	    for(Trendlines trendlines:trendlines_list){
+		    	    	if(null==trendlines.getRiqi4()){
+			  		   		   tempstr=trendlines.getGupiaodaima();		  		    		   
+			  		   		   trendlineshashmap.put(tempstr,trendlines);
+			  		   		   if(!gupiaodaimaSet.contains(tempstr))
+			  		   			   gupiaodaimaSet.add(tempstr);
+			  	    	   }
+		    	    }
+		    	   
+	    	    	//è·Œç ´æˆ–å‡ç ´æŸä¸€ä»·æ ¼ç‚¹æ—¶é¢„è­¦
+	    	    	List<Inoutprice> inoutprice_list=gupiaoDAO.getInoutprice();
 	    	    	
-	    	    	  
-	    	    	sendemailcondition=true;
-	    	    	
-	    	    	*/
-	    	    	List<Trendlines> trendlines_list = gupiaoDAO.getTrendlines();
-	    	    	if(!trendlines_list.isEmpty()){
-		  	    	    Iterator<Trendlines> iter=trendlines_list.iterator();
-		  	    	    while(iter.hasNext()){
-		  	    	    	Trendlines trendlines=(Trendlines)iter.next();
-		  	    		   if(null==trendlines.getRiqi4()){
-		  		    		   tempstr=trendlines.getGupiaodaima();		  		    		   
-		  		    		   trendlineshashmap.put(tempstr,trendlines);
-		  		    		   if(!gupiaodaimaSet.contains(tempstr))
-		  		    			   gupiaodaimaSet.add(tempstr);
-		  	    		   }
-		  	    	    }
+	    	    	for(Inoutprice inoutprice:inoutprice_list){
+	    	    		tempstr=inoutprice.getGupiaodaima();
+						inoutpricehashmap.put(tempstr,inoutprice);
+						 if(!gupiaodaimaSet.contains(tempstr))
+	  		    			   gupiaodaimaSet.add(tempstr);
 	    	    	}
-
-	    	    	List<Inoutprice> inoutprice_list = gupiaoDAO.getInoutprice();
-	  	    	    if(!inoutprice_list.isEmpty()){		  						  		
-						Iterator<Inoutprice> iter=inoutprice_list.iterator();
-						while(iter.hasNext()){
-							Inoutprice inoutprice   = (Inoutprice) iter.next();
-							tempstr=inoutprice.getGupiaodaima();
-							inoutpricehashmap.put(tempstr,inoutprice);
-							 if(!gupiaodaimaSet.contains(tempstr))
-		  		    			   gupiaodaimaSet.add(tempstr);
-						}
-	  	    	    }
-	  	    	    i_count = 0;
+	    	    
+	    	    	//è·Œç ´EXMPAçº¿æ—¶é¢„è­¦
+	    	    	List<Cycwarm> cycwarm_list = gupiaoDAO.getCycwarm();
+	    	    	for(Cycwarm cycwarm:cycwarm_list){
+	    	    		tempstr=cycwarm.getGupiaodaima();
+	    	    		cycwarmhashmap.put(tempstr,cycwarm);
+	    	    		if(!gupiaodaimaSet.contains(tempstr))
+	    	    			gupiaodaimaSet.add(tempstr);
+	    	    	}
+	    	    	
+	    	    	//è·Œç ´é»„é‡‘çº¿è­¦å‘Š
+	    	    	List<Scalewarm> scalewarm_list = gupiaoDAO.getScalewarm();
+	    	    	for(Scalewarm scalewarm:scalewarm_list){
+	    	    		tempstr=scalewarm.getGupiaodaima();
+	    	    		scalewarmhashmap.put(tempstr,scalewarm);
+	    	    		if(!gupiaodaimaSet.contains(tempstr))
+	    	    			gupiaodaimaSet.add(tempstr);
+	    	    	}
+	    	    
+	    	    	
+	    	    	i_count = 0;
 	  	    	    Iterator iter=gupiaodaimaSet.iterator();
 	  	    	    while(iter.hasNext()){
 	  	    	    	tempstr=(String)iter.next();
-	  	    	    	if(i_count<100){	    			  
+	  	    	    	if(i_count<100){//å¦‚æœå¤ªå¤šè‚¡ç¥¨ä»£ç ä¼šå‡ºç°é—®é¢˜çš„ï¼Œå°±é™å®š100ä¸ªè‚¡ç¥¨	    			  
 	  					  tempurl=MyTools.makeurl(tempurl,tempstr,i_count); 
 	  					  i_count++;
+	  				
 	  	    		    }
 	  				    else{		
 	  					  tempurl=MyTools.makeurl(tempurl,tempstr,i_count);
 	  					  i_count=0;
-	  					  manipulation_data(inoutprice_list,trendlines_list,tempurl);
+	  					  manipulation_data(inoutprice_list,trendlines_list,cycwarm_list,scalewarm_list,tempurl);
 	  					  tempurl="";
 	  				    }
 	  	    	    }
 	  	    	    if(i_count>0)
-	  	    	    	manipulation_data(inoutprice_list,trendlines_list,tempurl);
+	  	    	    	manipulation_data(inoutprice_list,trendlines_list,cycwarm_list,scalewarm_list,tempurl);
 	  	    	    if(this.str_seilin.length()>0){
-	  	    	    	sendEmailByQQ.doSendHtmlEmail("Èë",new StringBuffer(this.str_seilin),"13580016553@139.com");	
-	  	    	    	myprotocolhandler.broadcast(this.str_seilin);
+	  	    	    	//sendEmailByQQ.doSendHtmlEmail("ä¹°å…¥",new StringBuffer(this.str_seilin),"13580016553@139.com");	
+	  	    	    	MyTools.SendMailBy189("ä¹°å…¥",this.str_seilin);
+	  	    	    	//myprotocolhandler.broadcast(this.str_seilin);
 	  	    	    }
 	  	    	    if(this.str_seilout.length()>0){
-	  	    	    	sendEmailByQQ.doSendHtmlEmail("³ö",new StringBuffer(this.str_seilout),"13580016553@139.com");	
-	  	    	    	myprotocolhandler.broadcast(this.str_seilout);
+	  	    	    	//sendEmailByQQ.doSendHtmlEmail("å–å‡º",new StringBuffer(this.str_seilout),"13580016553@139.com");	
+	  	    	    	MyTools.SendMailBy189("å–å‡º",this.str_seilout);
+	  	    	    	//myprotocolhandler.broadcast(this.str_seilout);
 	  	    	    	
 	  	    	    }
-	  	    	  if(this.str_msg.length()>0){
-	  	    		  	sendEmailByQQ.doSendHtmlEmail("Í»ÆÆÇ÷ÏòÏß",new StringBuffer(this.str_msg),"13580016553@139.com");	
-	  	    	    	myprotocolhandler.broadcast(this.str_msg);
+	  	    	    if(this.str_msg.length()>0){
+	  	    		  //sendEmailByQQ.doSendHtmlEmail("æ¶ˆæ¯",new StringBuffer(this.str_msg),"13580016553@139.com");	
+	  	    	    	MyTools.SendMailBy189("æ¶ˆæ¯",this.str_msg);
+	  	    		  //myprotocolhandler.broadcast(this.str_msg);
 	  	    	    	
 	  	    	    }
+	  	    	  if(this.str_cycwarm.length()>0){
+	  	    		  //sendEmailByQQ.doSendHtmlEmail("æ¶ˆæ¯",new StringBuffer(this.str_msg),"13580016553@139.com");	
+	  	    	    	MyTools.SendMailBy189("expma",this.str_cycwarm);
+	  	    		  //myprotocolhandler.broadcast(this.str_msg);
+	  	    	    	
+	  	    	    }
+	  	    	 if(this.str_scalewarm.length()>0){
+	  	    		  //sendEmailByQQ.doSendHtmlEmail("æ¶ˆæ¯",new StringBuffer(this.str_msg),"13580016553@139.com");	
+	  	    	    	MyTools.SendMailBy189("é»„é‡‘çº¿",this.str_scalewarm);
+	  	    		  //myprotocolhandler.broadcast(this.str_msg);
+	  	    	    	
+	  	    	    }
+	  	    	    
+	  	    	    
+	  	    	    
 	  	    	    this.str_msg="";  	    	   
 	  	    	    this.str_seilin="";
 	  	    	    this.str_seilout="";

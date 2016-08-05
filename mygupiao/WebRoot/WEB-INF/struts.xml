@@ -34,12 +34,48 @@
                     <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
             </result>          
         </action>  
+        <action name="JsonActiongetTrendlines"     class="jsonAction" method="getTrendlines">    
+		 	<result type="json">  
+                    <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
+            </result>          
+        </action> 
+         <action name="JsonActiongetTrendlinestmp"     class="jsonAction" method="getTrendlinestmp">    
+		 	<result type="json">  
+                    <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
+            </result>          
+        </action> 
          <action name="JsonActionupdateRzzgsBeizhu"     class="jsonAction" method="updateRzzgsBeizhu">    
 		 	<result type="json">  
                     <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
             </result>   
         </action>  
-        
+ 		<action name="JsonActionupdateScalewarmBeizhu"     class="jsonAction" method="updateScalewarmBeizhu">    
+		 	<result type="json">  
+                    <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
+            </result>   
+        </action>  
+        <action name="JsonActionupdateCycwarmBeizhu"     class="jsonAction" method="updateCycwarmBeizhu">    
+		 	<result type="json">  
+                    <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
+            </result>   
+        </action>  
+		
+		<action name="JsonActiongetScalewarmtmp"     class="jsonAction" method="getScalewarmtmp">    
+		 	<result type="json">  
+                    <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
+            </result>     
+        </action>  
+        <action name="JsonActiongetCycwarmtmp"     class="jsonAction" method="getCycwarmtmp">    
+		 	<result type="json">  
+                    <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
+            </result>     
+        </action>  
+        <action name="JsonActionupdateTrendlines"     class="jsonAction" method="updateTrendlines">    
+		 	<result type="json">  
+                   <param name="root">jsonObject</param>       <!-- 返回结果是JsonAction的字段resultTree,用参数root -->
+                   <param name="contentType">text/html</param>    
+            </result>       
+        </action>  
         
      	<action name="GupiaoAction" class="gupiaoAction">     	
         	<result>huolipanwarning.jsp</result>

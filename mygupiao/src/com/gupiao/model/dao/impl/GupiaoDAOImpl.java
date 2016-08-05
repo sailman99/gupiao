@@ -1,5 +1,6 @@
 package com.gupiao.model.dao.impl;
 
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
@@ -20,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.annotation.Propagation;
 
 import com.gupiao.model.dao.GupiaoDAO;
+import com.gupiao.model.persist.entity.Cycwarm;
+import com.gupiao.model.persist.entity.Cycwarmtmp;
 import com.gupiao.model.persist.entity.Gupiaoshuju;
 import com.gupiao.model.persist.entity.Inoutprice;
 import com.gupiao.model.persist.entity.MbcjgsjsTemporary;
@@ -29,8 +32,11 @@ import com.gupiao.model.persist.entity.RiqiGroupcounts;
 import com.gupiao.model.persist.entity.Rzzgs;
 import com.gupiao.model.persist.entity.RzzgsShow;
 import com.gupiao.model.persist.entity.Rzzgszc;
+import com.gupiao.model.persist.entity.Scalewarm;
+import com.gupiao.model.persist.entity.Scalewarmtmp;
 import com.gupiao.model.persist.entity.Sendemail;
 import com.gupiao.model.persist.entity.Trendlines;
+import com.gupiao.model.persist.entity.Trendlinestmp;
 import com.gupiao.web.tools.MyTools;
 import com.example.share.Gpsclientdata;
 
@@ -46,8 +52,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 
 	@Autowired
 	public GupiaoDAOImpl(SessionFactory sessionFactory){
-		this.sessionFactory=sessionFactory;		
-		System.out.println("gupiaoDAO bean is created!");
+		this.sessionFactory=sessionFactory;				
 	}
 	
 	public StatelessSession getStatelessSession(){
@@ -149,12 +154,17 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		
 	}
 	public List<Trendlines> getTrendlines(){
-		StatelessSession session=getStatelessSession();
-		Query query = session.createQuery("from Trendlines where riqi4 is null");			
+		Session session = this.sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery("select * from Trendlines where riqi4 is null").addEntity(Trendlines.class);			
 		List<Trendlines> list=query.list();
-		session.close();
 		return list;
 		
+	}
+	public List<Trendlinestmp> getTrendlinestmp(){
+		Session session = this.sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery("select gupiaodaima,riqi1,dot1,riqi2,dot2,dot1todot2,gradient,riqi3,dot3,forecastprice,upordown from Trendlines where riqi4 is null").addEntity(Trendlinestmp.class);			
+		List<Trendlinestmp> list=query.list();
+		return list;
 	}
 	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=false)
 	public void deleteInoutprice(String str_gupiaodaima){
@@ -279,6 +289,19 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		session.close();
         return list;
 	}
+	public List<Scalewarm> getScalewarm(){
+		Session session=this.sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery(" select * from scalewarm where riqi is null ").addEntity(Scalewarm.class);
+		return query.list();
+		
+	}
+	public List<Cycwarm> getCycwarm(){
+		Session session=this.sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery(" select * from cycwarm where comeriqi is null ").addEntity(Cycwarm.class);
+		return query.list();
+	}
+	
+	
 	
 	public List<RzzgsShow> getrzzgsByCondition(Double jsqbh,Double jsqbh2,String riqi) {
 		Session session=this.sessionFactory.getCurrentSession();
@@ -329,5 +352,93 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		Session session=this.sessionFactory.getCurrentSession();
 		Query query = session.createSQLQuery("select to_char(riqi,'yyyy-mm-dd')  month from rzzgs where riqi>sysdate-750 group by riqi  order by riqi desc").addEntity(Months.class);
 		return query.list();		
+	}
+	public Integer getTrendlinesriqicount(String gupiaodaima,Date riqi1,Date riqi2){
+		Session session=this.sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery("select count(*) from gupiaoshuju where gupiaodaima=:v_gupiaodaima and riqi>:v_riqi1 and riqi<=:v_riqi2");
+		query.setParameter("v_gupiaodaima",gupiaodaima);
+		query.setParameter("v_riqi1",riqi1);
+		query.setParameter("v_riqi2",riqi2);
+		java.math.BigDecimal riqicount = (java.math.BigDecimal)query.list().iterator().next();
+		
+		return new Integer(riqicount.toString());
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=false)
+	public void updateCycwarm(String gupiaodaima,Integer cyc){
+		Cycwarm cycwarm=new Cycwarm();
+		cycwarm.setGupiaodaima(gupiaodaima);
+		cycwarm.setRiqi(new Date());
+		cycwarm.setCyc(cyc);
+		this.SaveObject(cycwarm);
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=false)
+	public void updateScalewarm(String gupiaodaima,Double scale,Date minriqi){
+		Scalewarm scalewarm=new Scalewarm();
+		scalewarm.setGupiaodaima(gupiaodaima);
+		scalewarm.setScale(scale);
+		scalewarm.setZuidiriqi(minriqi);
+		Session session=this.sessionFactory.getCurrentSession();
+		Query query=session.createSQLQuery("select * from gupiaoshuju where gupiaodaima=:v_gupiaodaima and riqi=:v_riqi").addEntity(Gupiaoshuju.class);
+		query.setParameter("v_gupiaodaima",gupiaodaima);
+		query.setParameter("v_riqi",minriqi);
+		List<Gupiaoshuju> list=query.list();
+		for(Gupiaoshuju gupiaoshuju:list){
+			scalewarm.setZuidijia(gupiaoshuju.getZuidi());
+		}
+		this.SaveObject(scalewarm);
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=false)
+	public void generic_updatescalewarm() { // gupiaoshujupackage.updatescalewarm;
+
+		Session session=this.sessionFactory.getCurrentSession();
+	//	session.beginTransaction();
+		// 定义一个匿名类，实现了Work接口
+		Work work = new Work() {
+			public void execute(Connection conn) throws SQLException {
+				// 通过JDBC API执行用于批量更新的SQL语句
+				java.sql.CallableStatement cstmt;
+				cstmt = conn
+						.prepareCall("{  call gupiaoshujupackage.updatescalewarm}");
+				cstmt.execute();
+				cstmt.close();
+			}
+		};
+		// 执行work
+
+		session.doWork(work);
+	//	session.close();
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=false)
+	public void generic_updatecycwarm() { // gupiaoshujupackage.updatecycwarm;
+
+		Session session=this.sessionFactory.getCurrentSession();
+		// 定义一个匿名类，实现了Work接口
+		Work work = new Work() {
+			public void execute(Connection conn) throws SQLException {
+				// 通过JDBC API执行用于批量更新的SQL语句
+				java.sql.CallableStatement cstmt;
+				cstmt = conn
+						.prepareCall("{  call  gupiaoshujupackage.updatecycwarm}");
+				cstmt.execute();
+				cstmt.close();
+			}
+		};
+		// 执行work
+
+		session.doWork(work);
+	//	session.close();
+	}	
+	
+	public List<Scalewarmtmp> getScalewarmtmp(){
+
+		Session session=this.sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery("select a.gupiaodaima,b.gupiaomingcheng,a.zuidiriqi,a.scale,a.zuidijia,a.zuigaoriqi,a.zuigaojia,a.jiage,to_char(a.riqi,'yyyy-mm-dd') as riqi,a.beizhu,to_char(a.beizhuriqi,'yyyy-mm-dd') as beizhuriqi from scalewarm a,gupiao b where a.gupiaodaima=b.gupiaodaima").addEntity(Scalewarmtmp.class);
+        return query.list();
+	}
+	public List<Cycwarmtmp> getCycwarmtmp(){
+
+		Session session=this.sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery("select a.gupiaodaima,b.gupiaomingcheng,a.riqi,a.cyc,a.jiage,to_char(a.comeriqi,'yyyy-mm-dd') as comeriqi,a.beizhu,to_char(a.beizhuriqi,'yyyy-mm-dd') as beizhuriqi from cycwarm a,gupiao b where a.gupiaodaima=b.gupiaodaima").addEntity(Cycwarmtmp.class);
+        return query.list();
 	}
 }
