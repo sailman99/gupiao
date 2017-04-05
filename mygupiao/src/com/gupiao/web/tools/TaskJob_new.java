@@ -36,7 +36,7 @@ public class TaskJob_new{
 
 	
 		private GupiaoDAO gupiaoDAO;
-		
+	
 	//	private MyProtocolHandler myprotocolhandler;
 		
 	//	private SendEmailByQQ sendEmailByQQ=new SendEmailByQQ();
@@ -218,15 +218,42 @@ public class TaskJob_new{
 							//判断股价是否达到黄金比例价
 							for(Scalewarm scalewarm:scalewarm_list){
 								if(scalewarm.getGupiaodaima().equals(hashmapkey)){
-									if(scalewarm.getJiage()>0){
+									if((scalewarm.getJiage()>0)&&(null==scalewarm.getRiqi())){
 										if(MyTools.StrToDouble(sinajs[5])<=scalewarm.getJiage()&&MyTools.StrToDouble(sinajs[5])>0){											
-											this.str_scalewarm=this.str_scalewarm+hashmapkey+","+scalewarm.getJiage();
+											this.str_scalewarm=this.str_scalewarm+hashmapkey+",股价由高点回调,达到设定的价格"+scalewarm.getJiage();
 											scalewarm.setRiqi(new Date());
 											gupiaoDAO.SaveObject(scalewarm);
 										}
 									}
 								}	
 							}
+							
+							//判断股价是否达到再回调0.5
+							for(Scalewarm scalewarm:scalewarm_list){
+								if(scalewarm.getGupiaodaima().equals(hashmapkey)){
+									if(scalewarm.getJierudianjiagea()>0&&null==scalewarm.getJierudianjiageariqi()){
+										if(MyTools.StrToDouble(sinajs[5])<=scalewarm.getJierudianjiagea()&&MyTools.StrToDouble(sinajs[5])>0){											
+											this.str_scalewarm=this.str_scalewarm+hashmapkey+",股价达到再回调0.5,设定的价格是"+scalewarm.getJierudianjiagea();
+											scalewarm.setJierudianjiageariqi(new Date());
+											gupiaoDAO.SaveObject(scalewarm);
+										}
+									}
+								}	
+							}
+							//判断股价是否达到再回调0.618
+							for(Scalewarm scalewarm:scalewarm_list){
+								if(scalewarm.getGupiaodaima().equals(hashmapkey)){
+									if(scalewarm.getJierudianjiageb()>0&&null==scalewarm.getJierudianjiagebriqi()){
+										if(MyTools.StrToDouble(sinajs[5])<=scalewarm.getJierudianjiageb()&&MyTools.StrToDouble(sinajs[5])>0){											
+											this.str_scalewarm=this.str_scalewarm+hashmapkey+",股价达到再回调0.618,设定的价格是"+scalewarm.getJierudianjiageb();
+											scalewarm.setJierudianjiagebriqi(new Date());
+											gupiaoDAO.SaveObject(scalewarm);
+										}
+									}
+								}	
+							}
+							
+							
 							
 						}
 					}
@@ -316,30 +343,30 @@ public class TaskJob_new{
 	  	    	    	manipulation_data(inoutprice_list,trendlines_list,cycwarm_list,scalewarm_list,tempurl);
 	  	    	    if(this.str_seilin.length()>0){
 	  	    	    	//sendEmailByQQ.doSendHtmlEmail("买入",new StringBuffer(this.str_seilin),"13580016553@139.com");	
-	  	    	    	MyTools.SendMailBy189("买入",this.str_seilin);
+	  	    	    	MyTools.SendMailBy163("买入",this.str_seilin);
 	  	    	    	//myprotocolhandler.broadcast(this.str_seilin);
 	  	    	    }
 	  	    	    if(this.str_seilout.length()>0){
 	  	    	    	//sendEmailByQQ.doSendHtmlEmail("卖出",new StringBuffer(this.str_seilout),"13580016553@139.com");	
-	  	    	    	MyTools.SendMailBy189("卖出",this.str_seilout);
+	  	    	    	MyTools.SendMailBy163("卖出",this.str_seilout);
 	  	    	    	//myprotocolhandler.broadcast(this.str_seilout);
 	  	    	    	
 	  	    	    }
 	  	    	    if(this.str_msg.length()>0){
 	  	    		  //sendEmailByQQ.doSendHtmlEmail("消息",new StringBuffer(this.str_msg),"13580016553@139.com");	
-	  	    	    	MyTools.SendMailBy189("消息",this.str_msg);
+	  	    	    	MyTools.SendMailBy163("消息",this.str_msg);
 	  	    		  //myprotocolhandler.broadcast(this.str_msg);
 	  	    	    	
 	  	    	    }
 	  	    	  if(this.str_cycwarm.length()>0){
 	  	    		  //sendEmailByQQ.doSendHtmlEmail("消息",new StringBuffer(this.str_msg),"13580016553@139.com");	
-	  	    	    	MyTools.SendMailBy189("expma",this.str_cycwarm);
+	  	    	    	MyTools.SendMailBy163("expma",this.str_cycwarm);
 	  	    		  //myprotocolhandler.broadcast(this.str_msg);
 	  	    	    	
 	  	    	    }
 	  	    	 if(this.str_scalewarm.length()>0){
 	  	    		  //sendEmailByQQ.doSendHtmlEmail("消息",new StringBuffer(this.str_msg),"13580016553@139.com");	
-	  	    	    	MyTools.SendMailBy189("黄金线",this.str_scalewarm);
+	  	    	    	MyTools.SendMailBy163("黄金线",this.str_scalewarm);
 	  	    		  //myprotocolhandler.broadcast(this.str_msg);
 	  	    	    	
 	  	    	    }

@@ -303,7 +303,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 	
 	
 	
-	public List<RzzgsShow> getrzzgsByCondition(Double jsqbh,Double jsqbh2,String riqi) {
+/*	public List<RzzgsShow> getrzzgsByCondition(Double jsqbh,Double jsqbh2,String riqi) {
 		Session session=this.sessionFactory.getCurrentSession();
 		//	StatelessSession session=getStatelessSession();
 		
@@ -317,12 +317,34 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		List<RzzgsShow> list=query.list();
 		
         return list;
+	}*/
+	public List<RzzgsShow> getrzzgsByCondition(Double jsqbh,Double jsqbh2,String riqi) {
+		Session session=this.sessionFactory.getCurrentSession();
+		//	StatelessSession session=getStatelessSession();
+		
+		Query query = session.createSQLQuery(" select a.gupiaodaima,b.gupiaomingcheng,a.riqi,"+
+		" a.gdzs,a.rzzg,a.jsqbh,a.zgb,a.ltg,a.jsqbh2,to_char(a.genericriqi,'yyyy-MM-dd') genericriqi,"+
+		" to_char(a.beizhuriqi,'yyyy-MM-dd') beizhuriqi,a.beizhu , c.dazhongjiaoyicounts "+
+		"		from rzzgs a,gupiao b,"+
+		" (select gupiaodaima,count(*) dazhongjiaoyicounts from dazhongjiaoyi "+
+		" where  to_char(riqi,'yyyy-MM-dd')>:v_riqi and  to_char(riqi-270,'yyyy-MM-dd')<:v_riqi group by gupiaodaima) c "+
+		" where a.gupiaodaima=b.gupiaodaima (+) and a.gupiaodaima=c.gupiaodaima(+) "+		
+        "  and a.jsqbh>=:v_jsqbh and a.jsqbh2>=:v_jsqbh2 and to_char(a.riqi,'yyyy-MM-dd')=:v_riqi")
+        
+        
+        .addEntity(RzzgsShow.class);
+		query.setParameter("v_jsqbh", jsqbh);
+		query.setParameter("v_jsqbh2", jsqbh2);
+		query.setParameter("v_riqi",riqi);
+		List<RzzgsShow> list=query.list();
+		
+        return list;
 	}
 	public List<RzzgsShow> getrzzgsbygupiaodaima(String gupiaodaima){
 		
 		Session session=this.sessionFactory.getCurrentSession();
 		Query query = session.createSQLQuery(" select a.gupiaodaima,b.gupiaomingcheng,a.riqi,"+
-				"a.gdzs,a.rzzg,a.jsqbh,a.zgb,a.ltg,a.jsqbh2,to_char(a.genericriqi,'yyyy-MM-dd') genericriqi,to_char(a.beizhuriqi,'yyyy-MM-dd') beizhuriqi,a.beizhu "+
+				"a.gdzs,a.rzzg,a.jsqbh,a.zgb,a.ltg,a.jsqbh2,to_char(a.genericriqi,'yyyy-MM-dd') genericriqi,to_char(a.beizhuriqi,'yyyy-MM-dd') beizhuriqi,a.beizhu,0 dazhongjiaoyicounts "+
 				"		from rzzgs a,gupiao b where a.gupiaodaima=b.gupiaodaima "+		
 		        "  and a.gupiaodaima=:v_gupiaodaima order by a.riqi desc").addEntity(RzzgsShow.class);
 				query.setParameter("v_gupiaodaima", gupiaodaima);
@@ -347,6 +369,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		session.close();
         return list;
 	}
+	
 	public List<Months> getMonths(){
 		
 		Session session=this.sessionFactory.getCurrentSession();
@@ -432,7 +455,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 	public List<Scalewarmtmp> getScalewarmtmp(){
 
 		Session session=this.sessionFactory.getCurrentSession();
-		Query query = session.createSQLQuery("select a.gupiaodaima,b.gupiaomingcheng,a.zuidiriqi,a.scale,a.zuidijia,a.zuigaoriqi,a.zuigaojia,a.jiage,to_char(a.riqi,'yyyy-mm-dd') as riqi,a.beizhu,to_char(a.beizhuriqi,'yyyy-mm-dd') as beizhuriqi from scalewarm a,gupiao b where a.gupiaodaima=b.gupiaodaima").addEntity(Scalewarmtmp.class);
+		Query query = session.createSQLQuery("select a.gupiaodaima,b.gupiaomingcheng,a.zuidiriqi,a.scale,a.zuidijia,a.zuigaoriqi,a.zuigaojia,a.jiage,to_char(a.riqi,'yyyy-mm-dd') as riqi,a.beizhu,to_char(a.beizhuriqi,'yyyy-mm-dd') as beizhuriqi,a.huitiaobili,a.fantanbili,a.zaihuitiaobili,to_char(a.jierudianjiageariqi,'yyyy-mm-dd') as jierudianjiageariqi,to_char(a.jierudianjiagebriqi,'yyyy-mm-dd') as jierudianjiagebriqi from scalewarm a,gupiao b where a.gupiaodaima=b.gupiaodaima").addEntity(Scalewarmtmp.class);
         return query.list();
 	}
 	public List<Cycwarmtmp> getCycwarmtmp(){

@@ -1116,7 +1116,62 @@ public static void SendMailBy189(String subject,String msg) {
         }
 	
 	}
-	
+public static void SendMailBy163(String subject,String msg) {
+		
+	String host = "smtp.163.com";   //发邮件服务器的SMtP
+    String from = "13580016553@163.com";    //发邮件的账号
+    String to = "13580016553@139.com";   //接收邮件的账号
+    final String SMTP = "smtp"; 
+    
+    Properties props = new Properties();
+    Properties prop_send_hotmail = new Properties();
+    
+    // Setup mail server
+    props.put("mail.smtp.host", host);
+  //  props.put("mail.smtp.port", "25");  // default smtp
+    props.put("mail.Transport.protocol", SMTP);
+    // Get session
+    props.put("mail.smtp.auth", "true"); 
+    prop_send_hotmail.putAll(props); // add default smtp
+    prop_send_hotmail.put("mail.smtp.starttls.enable", "true");
+   
+    
+    javax.mail.Authenticator myauth=new javax.mail.Authenticator(){
+    	private String strUser="13580016553@163.com";//发邮件用到的账号
+    	private String strPwd="a19920708";//发邮件的密码
+    	 protected PasswordAuthentication getPasswordAuthentication() {
+    	      return new PasswordAuthentication(strUser, strPwd);}
+    	
+    };
+    
+    javax.mail.Session session = Session.getDefaultInstance(prop_send_hotmail,myauth);
+
+    javax.mail.internet.MimeMessage message = new MimeMessage(session);
+    
+    try{
+    	//Set the from address
+	    message.setFrom(new InternetAddress(from));
+
+	    // Set the to address
+	    message.addRecipient(Message.RecipientType.TO,
+	      new InternetAddress(to));
+
+	    // Set the subject
+	    message.setSubject(subject);
+	    // Set the content
+	    message.setText(msg.trim());
+
+	    message.saveChanges();
+
+	    
+	    Transport.send(message); 
+	      
+    } catch (Exception e) {
+          System.out.println(e);
+    }
+
+}
+
 
 	/*
 	 * �����ж�ϵͳʱ��,�����ڹ�Ʊ����ʱ��Ź���,����һ���������9:30-11:30,13:00-15:00
