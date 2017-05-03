@@ -3,6 +3,8 @@ package com.gupiao.model.dao;
 import java.util.Date;
 import java.util.List;
 
+import net.sf.json.JSONArray;
+
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -38,6 +40,7 @@ public interface GupiaoDAO {
 	public List<Trendlines> getTrendlines();
 	public List<Trendlinestmp> getTrendlinestmp();
 	public void SaveObject(Object k);
+	public void DeleteObject(Object k);
 	public String getprocedurecondition(String str_procedurethread);
 	public List<Gupiaoshuju> getgupiaoshuju(String gupiaodaima) throws Exception;
 	public void updateGpsclientdata(List<Gpsclientdata> list);
@@ -55,4 +58,6 @@ public interface GupiaoDAO {
 	public void generic_updatescalewarm();
 	public List<Scalewarmtmp> getScalewarmtmp();
 	public List<Cycwarmtmp> getCycwarmtmp();
+	public void deleteScalewarm(JSONArray jsonArray);
+	public void clearUserdefine();
 }

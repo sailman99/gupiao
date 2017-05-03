@@ -7,6 +7,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -162,7 +165,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 	}
 	public List<Trendlinestmp> getTrendlinestmp(){
 		Session session = this.sessionFactory.getCurrentSession();
-		Query query = session.createSQLQuery("select gupiaodaima,riqi1,dot1,riqi2,dot2,dot1todot2,gradient,riqi3,dot3,forecastprice,upordown from Trendlines where riqi4 is null").addEntity(Trendlinestmp.class);			
+		Query query = session.createSQLQuery("select a.gupiaodaima,b.gupiaomingcheng,a.riqi1,a.dot1,a.riqi2,a.dot2,a.dot1todot2,a.gradient,a.riqi3,a.dot3,a.forecastprice,to_char(a.riqi4,'yyyy-mm-dd') as riqi4, a.upordown from Trendlines a,Gupiao b where a.gupiaodaima=b.gupiaodaima ").addEntity(Trendlinestmp.class);			
 		List<Trendlinestmp> list=query.list();
 		return list;
 	}
@@ -277,7 +280,14 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 	//	session.close();
 		//this.getHibernateTemplate().getSessionFactory().getCurrentSession().saveOrUpdate(k);
 	}
-	
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=false)
+	public void DeleteObject(Object k) {
+		// TODO Auto-generated method stub
+		Session session = this.sessionFactory.getCurrentSession();
+		session.delete(k);
+	//	session.close();
+		//this.getHibernateTemplate().getSessionFactory().getCurrentSession().saveOrUpdate(k);
+	}
 	public List getrzzgsGroupByCondition(Double jsqbh,Double jsqbh2) {
 		//Session session=this.sessionFactory.getCurrentSession();
 		StatelessSession session=getStatelessSession();
@@ -463,5 +473,28 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		Session session=this.sessionFactory.getCurrentSession();
 		Query query = session.createSQLQuery("select a.gupiaodaima,b.gupiaomingcheng,a.riqi,a.cyc,a.jiage,to_char(a.comeriqi,'yyyy-mm-dd') as comeriqi,a.beizhu,to_char(a.beizhuriqi,'yyyy-mm-dd') as beizhuriqi from cycwarm a,gupiao b where a.gupiaodaima=b.gupiaodaima").addEntity(Cycwarmtmp.class);
         return query.list();
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=false)
+	public void deleteScalewarm(JSONArray jsonArray){
+
+		JSONObject jsonObject;
+		
+		Session session=this.sessionFactory.getCurrentSession();
+		for(int i=0;i<jsonArray.size();i++){
+			jsonObject=jsonArray.getJSONObject(i);
+		
+			Query query = session.createSQLQuery("delete from scalewarm where gupiaodaima =:v_gupiaodaima and zuidiriqi=:v_zuidiriqi and scale=:v_scale");
+			query.setParameter("v_gupiaodaima",jsonObject.getString("gupiaodaima"));
+			query.setParameter("v_zuidiriqi",MyTools.strToDateTime((jsonObject.getString("zuidiriqi")).substring(0,10)));
+			query.setParameter("v_scale",jsonObject.getDouble("scale"));
+			query.executeUpdate();
+			
+		}		
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=false)
+	public void clearUserdefine(){
+		Session session=this.sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery("delete from userdefine where  1=1");
+		query.executeUpdate();
 	}
 }

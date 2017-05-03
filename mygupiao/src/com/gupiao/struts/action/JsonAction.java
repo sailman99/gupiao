@@ -22,6 +22,7 @@ import com.gupiao.model.persist.entity.JsonGupiaoshuju;
 import com.gupiao.model.persist.entity.Rzzgs;
 import com.gupiao.model.persist.entity.Scalewarm;
 import com.gupiao.model.persist.entity.Trendlines;
+import com.gupiao.model.persist.entity.Userdefine;
 import com.gupiao.web.tools.DateJsonValueProcessor;
 import com.gupiao.web.tools.MyTools;
 
@@ -303,6 +304,22 @@ public class JsonAction  extends ActionSupport {
 		
 		return "success";
 	}
+	
+	
+	public String updateUserdefine() throws Exception{
+		 gupiaoDAO.clearUserdefine();
+		 JSONArray array = JSONArray.fromObject(jsonString); 
+		 for (int i = 0; i < array.size(); i++)  
+	        {  
+			 jsonObject = array.getJSONObject(i); 
+			 Userdefine userdefine=new Userdefine();
+			 userdefine.setGupiaodaima(jsonObject.get("gupiaodaima").toString());
+			 gupiaoDAO.SaveObject(userdefine);
+	        }
+		 
+		 return "success";
+	}
+	
 	public String updateRzzgsBeizhu() throws Exception{
 		
 		JSONArray array = JSONArray.fromObject(jsonString); 
@@ -396,5 +413,8 @@ public class JsonAction  extends ActionSupport {
 		
 		return "success";
 	}
-	
+	public String deleteScalewarm(){
+		this.gupiaoDAO.deleteScalewarm(JSONArray.fromObject(jsonString));
+		return "success";
+	}
 }

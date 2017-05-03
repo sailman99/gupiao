@@ -20,6 +20,7 @@ public class Trendlinestmp implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = -3181139419685546457L;
 	private String gupiaodaima;
+	private String gupiaomingcheng;
 	private Date riqi1;
 	private Double dot1;
 	private Date riqi2;
@@ -29,6 +30,7 @@ public class Trendlinestmp implements java.io.Serializable {
 	private Date riqi3;
 	private Double dot3;
 	private Double forecastprice;
+	private String riqi4;
 	private String upordown;
 	
 
@@ -40,6 +42,12 @@ public class Trendlinestmp implements java.io.Serializable {
 		this.gupiaodaima = gupiaodaima;
 	}
 
+	public String getGupiaomingcheng() {
+		return gupiaomingcheng;
+	}
+	public void setGupiaomingcheng(String gupiaomingcheng) {
+		this.gupiaomingcheng = gupiaomingcheng;
+	}
 	@Id
 	public Date getRiqi1() {
 		return riqi1;
@@ -97,6 +105,13 @@ public class Trendlinestmp implements java.io.Serializable {
 		this.forecastprice = forecastprice;
 	}
 	
+	
+	public String getRiqi4() {
+		return riqi4;
+	}
+	public void setRiqi4(String riqi4) {
+		this.riqi4 = riqi4;
+	}
 	public String getUpordown() {
 		return upordown;
 	}

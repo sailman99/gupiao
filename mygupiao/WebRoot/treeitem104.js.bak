@@ -61,10 +61,20 @@ Ext.define('Panel104', {
 							var objarray = new Array();
 
 							for(i=0;i<this.ownerCt.ownerCt.getSelectionModel().getSelection().length;i++){
-								var jsonobj={gupiaodaima:this.ownerCt.ownerCt.getSelectionModel().getSelection()[i].data.gupiaodaima};
+								var jsonobj={gupiaodaima:this.ownerCt.ownerCt.getSelectionModel().getSelection()[i].data.gupiaodaima,zuidiriqi:this.ownerCt.ownerCt.getSelectionModel().getSelection()[i].data.zuidiriqi,scale:this.ownerCt.ownerCt.getSelectionModel().getSelection()[i].data.scale};
 			            		objarray.push(jsonobj);
 							}
-							
+							Ext.Ajax.request({
+			            		url:'JsonActiondeleteScalewarm',
+			            		params:{'jsonString':Ext.JSON.encode(objarray)},
+			            		success:function(){
+			            			scalewarmstore.reload();
+									console.log("success");
+			            		},
+			            		failure:function(){}
+			            	});
+							scalewarmstore.reload();
+									console.log("successA");
 			            }
 					}]
 		}],	 

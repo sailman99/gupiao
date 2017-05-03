@@ -61,19 +61,18 @@ Ext.define('Panel104', {
 							var objarray = new Array();
 
 							for(i=0;i<this.ownerCt.ownerCt.getSelectionModel().getSelection().length;i++){
-								var jsonobj={gupiaodaima:this.ownerCt.ownerCt.getSelectionModel().getSelection()[i].data.gupiaodaima};
+								var jsonobj={gupiaodaima:this.ownerCt.ownerCt.getSelectionModel().getSelection()[i].data.gupiaodaima,zuidiriqi:this.ownerCt.ownerCt.getSelectionModel().getSelection()[i].data.zuidiriqi,scale:this.ownerCt.ownerCt.getSelectionModel().getSelection()[i].data.scale};
 			            		objarray.push(jsonobj);
 							}
 							Ext.Ajax.request({
-			            		url:'JsonActionupdateQx_scxx',
+			            		url:'JsonActiondeleteScalewarm',
 			            		params:{'jsonString':Ext.JSON.encode(objarray)},
-			            		success:function(param1,param2){
-			            			Ext.getCmp('checkboxgroup').removeAll(true);
-			            			var obj=Ext.JSON.decode(param1.responseText);
-			            			  Ext.Msg.alert('消息',obj.msg);
+			            		success:function(){
+			            			
 			            		},
 			            		failure:function(){}
 			            	});
+							scalewarmstore.reload();
 							
 			            }
 					}]

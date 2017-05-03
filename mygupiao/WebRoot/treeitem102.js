@@ -2,6 +2,7 @@ Ext.define('Trendlines', {//定义一个新类
 	    extend: 'Ext.data.Model',//这个新类从Ext.data.Model扩展，表明这个新类能用Ext.data.Model所有的属性和方法
 	    fields: [ //数组对象，里面包含json对象，fields这个是静态属性，可通过Task.fields[]访问
 	        {name:'gupiaodaima',type:'string'},
+	        {name:'gupiaomingcheng',type:'string'}, 
 			{name:'riqi1',type:'date'},
 			{name:'dot1',type:'float'},
 			{name:'riqi2',type:'date'},
@@ -11,6 +12,7 @@ Ext.define('Trendlines', {//定义一个新类
 			{name:'riqi3',type:'date'},
 			{name:'dot3',type:'float'},
 			{name:'forecastprice',type:'float'},
+	        {name:'riqi4',type:'string'},
 			{name:'upordown',type:'string'}
 	    ]
 	});
@@ -159,6 +161,11 @@ Ext.define('Panel102', {
 	                width: 60,
 	                sortable: true,
 	                dataIndex: 'gupiaodaima'
+	            },{
+	                header: '股票名称',
+	                width: 80,
+	                sortable: true,
+	                dataIndex: 'gupiaomingcheng'
 	            },
 				
 				{
@@ -207,6 +214,11 @@ Ext.define('Panel102', {
 	            	header: '预测价格',
 	                width: 80,             
 	                dataIndex: 'forecastprice'
+	            },{
+	                header: '到达日期',					
+	                width: 100,
+	                sortable: true,
+	                dataIndex: 'riqi4'
 	            }, {
 	                header: '0下跌到，1突破',
 	                width: 140,             

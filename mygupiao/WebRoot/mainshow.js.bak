@@ -105,8 +105,8 @@ Ext.onReady(function(){
 									objarray.push(jsonobj);
 								}
 								if(records.length>0){
-								//	Ext.Ajax.request({url:'',
-									//	params:{'jsonString':Ext.JSON.encode(objarray)});
+									Ext.Ajax.request({url:'JsonActionUpdateUserdefine',
+									params:{'jsonString':Ext.JSON.encode(objarray)}});
 								}
 							}
 						},{
