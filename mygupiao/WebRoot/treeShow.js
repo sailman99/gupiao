@@ -37,7 +37,7 @@ var treestore = Ext.create('Ext.data.TreeStore', {
                 id:'treeitem105'           
             },
             {
-                text: '监测换手率',
+                text: '测试用的',
                 leaf: true,
                 width:'100%',
                 id:'treeitem106'           

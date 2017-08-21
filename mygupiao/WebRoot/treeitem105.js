@@ -1,31 +1,44 @@
-Ext.define('Cycwarm', {//定义一个新类
-	    extend: 'Ext.data.Model',//这个新类从Ext.data.Model扩展，表明这个新类能用Ext.data.Model所有的属性和方法
-	    fields: [ //数组对象，里面包含json对象，fields这个是静态属性，可通过Task.fields[]访问
-	        {name:'gupiaodaima',type:'string'},
-	        {name:'gupiaomingcheng',type:'string'}, 
-			{name:'riqi',type:'date'},
-			{name:'cyc',type:'float'},
-			{name:'jiage',type:'float'},
-			{name:'comeriqi',type:'string'},
-			{name:'beizhu',type:'string'},
-			{name:'beizhuriqi',type:'string'} 
-	    ]
+ var myitem105=(function(){
+	Ext.define('Cycwarm', {//定义一个新类
+			extend: 'Ext.data.Model',//这个新类从Ext.data.Model扩展，表明这个新类能用Ext.data.Model所有的属性和方法
+			fields: [ //数组对象，里面包含json对象，fields这个是静态属性，可通过Task.fields[]访问
+				{name:'gupiaodaima',type:'string'},
+				{name:'gupiaomingcheng',type:'string'}, 
+				{name:'riqi',type:'date'},
+				{name:'cyc',type:'float'},
+				{name:'jiage',type:'float'},
+				{name:'comeriqi',type:'string'},
+				{name:'beizhu',type:'string'},
+				{name:'beizhuriqi',type:'string'} 
+			]
+		});
+	var cycwarmstoretmp=Ext.create('Ext.data.Store',{
+			model: 'Cycwarm',  //属性model由上面新类Rzzgs赋值  
+			data:[{}]
 	});
-var cycwarmstoretmp=Ext.create('Ext.data.Store',{
-    	model: 'Cycwarm',  //属性model由上面新类Rzzgs赋值  
-    	data:[{}]
-});
-var cycwarmstore = Ext.create('Ext.data.Store', {//创建全局变量store,这是实例化Ext.data.Store
-	    model: 'Cycwarm',  //属性model由上面新类Rzzgs赋值  
-	    asynchronousLoad : true,
-	    proxy:{
-	    	type:'ajax',
-		    url:'JsonActiongetCycwarmtmp'		   
-	    }
-});
-//定义一个新类
+	var cycwarmstore = Ext.create('Ext.data.Store', {//创建全局变量store,这是实例化Ext.data.Store
+			model: 'Cycwarm',  //属性model由上面新类Rzzgs赋值  
+			asynchronousLoad : true,
+			proxy:{
+				type:'ajax',
+				url:'JsonActiongetCycwarmtmp'		   
+			}
+	});
+					//数据装载成功
+	cycwarmstore.on('load',function(parent, records, successful, operation, eOpts){
+				if(successful && records.length>0){		
+					myPanel.reconfigure(this);
+					myPanel.on('rowdblclick',function(parent,record){
+						mycycwarmpopwindow.rowvalue=record;
+						mycycwarmpopwindow.show();
+						//console.log("rowdblclick");
+					})
+				}
+	});
+	
+	//定义一个新类
 
-Ext.define('Panel105', {
+	Ext.define('newPanel', {
 		 extend:'Ext.grid.GridPanel',
 		buffenedRenderer:true,
 		store:cycwarmstoretmp,
@@ -104,15 +117,18 @@ Ext.define('Panel105', {
 	                 dataIndex: 'beizhuriqi'
 	            }
 	            ]
-});
-				//数据装载成功
-cycwarmstore.on('load',function(parent, records, successful, operation, eOpts){
-		if(successful && records.length>0){		
-			
-			Ext.getCmp('myPanel105').reconfigure(this);
-			Ext.getCmp('myPanel105').on('rowdblclick',function(parent,record){
-				mycycwarmpopwindow.rowvalue=record;
-				mycycwarmpopwindow.show();
-			})
-		}
-});
+	});
+				
+	var myPanel = new newPanel();
+	function getcycwarmstore(){
+		return cycwarmstore;
+	}
+	function getPanel(){
+		return myPanel;
+	}
+	return {
+		getcycwarmstore :getcycwarmstore,
+		getPanel :getPanel
+	}
+		
+})();

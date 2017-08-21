@@ -105,6 +105,7 @@ Ext.onReady(function(){
 									objarray.push(jsonobj);
 								}
 								if(records.length>0){
+									console.log('OK');
 									Ext.Ajax.request({url:'JsonActionUpdateUserdefine',
 									params:{'jsonString':Ext.JSON.encode(objarray)}});
 								}
@@ -202,6 +203,11 @@ Ext.onReady(function(){
 			createTab(item,[Ext.isEmpty(Ext.getCmp('myPanel105'))?Ext.create('Panel105',{id:'myPanel105'}):Ext.getCmp('myPanel105')]);
 	        cycwarmstore.reload();
 			Ext.getCmp('myPanel105').reconfigure(cycwarmstore);
+				break; 
+	   case 'treeitem106':
+			createTab(item,myitem106.getPanel());
+	       // myitem106.getcycwarmstore().reload();
+			//myitem106.getPanel().reconfigure(myitem106.getcycwarmstore());
 				break; 
 	    
 	   }

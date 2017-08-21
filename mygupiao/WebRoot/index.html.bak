@@ -10,6 +10,7 @@
 <script type="text/javascript" src="treeShow.js"></script>
 <script type="text/javascript" src="rzzgsbeizhuwindow.js"></script>
 <script type="text/javascript" src="scalewarmbeizhuwindow.js"></script>
+<script type="text/javascript" src="cycwarmbeizhuwindow.js"></script>
 <script type="text/javascript" src="treeitem101.js"></script>
 <script type="text/javascript" src="treeitem102.js"></script>
 <script type="text/javascript" src="treeitem104.js"></script>

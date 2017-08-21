@@ -200,9 +200,14 @@ Ext.onReady(function(){
 			Ext.getCmp('myPanel104').reconfigure(scalewarmstore);
 				break; 
 	   case 'treeitem105':
-			createTab(item,[Ext.isEmpty(Ext.getCmp('myPanel105'))?Ext.create('Panel105',{id:'myPanel105'}):Ext.getCmp('myPanel105')]);
-	        cycwarmstore.reload();
-			Ext.getCmp('myPanel105').reconfigure(cycwarmstore);
+			createTab(item,myitem105.getPanel());
+	        myitem105.getcycwarmstore().reload();
+			myitem105.getPanel().reconfigure(myitem105.getcycwarmstore());
+				break; 
+	   case 'treeitem106':
+			createTab(item,myitem106.getPanel());
+	        myitem106.getcycwarmstore().reload();
+			myitem106.getPanel().reconfigure(myitem106.getcycwarmstore());
 				break; 
 	    
 	   }

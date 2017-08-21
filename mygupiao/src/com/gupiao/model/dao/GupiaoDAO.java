@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 import com.example.share.Gpsclientdata;
 import com.gupiao.model.persist.entity.Cycwarm;
 import com.gupiao.model.persist.entity.Cycwarmtmp;
+import com.gupiao.model.persist.entity.Gaokao_subjectchapter;
+import com.gupiao.model.persist.entity.Gaokao_vedioartitle;
 import com.gupiao.model.persist.entity.Gupiaoshuju;
 import com.gupiao.model.persist.entity.Inoutprice;
 import com.gupiao.model.persist.entity.MbcjgsjsTemporary;
@@ -60,4 +62,11 @@ public interface GupiaoDAO {
 	public List<Cycwarmtmp> getCycwarmtmp();
 	public void deleteScalewarm(JSONArray jsonArray);
 	public void clearUserdefine();
+	public void updateGaokao_videoartitle(JSONArray jsonArray);
+	public void updateGaokao_labelclassification(JSONArray jsonArray);
+	public void updateGaokao_subjectchapter(JSONArray jsonArray);
+	public Integer whetherExistenceUrl(String jsonString);
+	public List<Gaokao_subjectchapter> getGaokao_subjectchapter(String jsonString);
+	public List<Gaokao_subjectchapter> getGaokao_labelclassification(String jsonString);
+	public List<Gaokao_vedioartitle>   getGaokao_vedioartitle(String jsonString);
 }

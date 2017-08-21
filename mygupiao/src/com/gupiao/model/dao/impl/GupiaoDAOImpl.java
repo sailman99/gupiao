@@ -1,6 +1,6 @@
 package com.gupiao.model.dao.impl;
 
-import java.math.BigInteger;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
@@ -15,9 +15,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 import org.hibernate.jdbc.Work;
-import org.hibernate.type.DateType;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +23,11 @@ import org.springframework.transaction.annotation.Propagation;
 import com.gupiao.model.dao.GupiaoDAO;
 import com.gupiao.model.persist.entity.Cycwarm;
 import com.gupiao.model.persist.entity.Cycwarmtmp;
+import com.gupiao.model.persist.entity.Gaokao_lookrec;
+import com.gupiao.model.persist.entity.Gaokao_vedioartitle;
+import com.gupiao.model.persist.entity.Gaokao_labelclassification;
+import com.gupiao.model.persist.entity.Gaokao_subjectchapter;
+import com.gupiao.model.persist.entity.Gaokao_vedioartitleSendPhone;
 import com.gupiao.model.persist.entity.Gupiaoshuju;
 import com.gupiao.model.persist.entity.Inoutprice;
 import com.gupiao.model.persist.entity.MbcjgsjsTemporary;
@@ -496,5 +498,223 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		Session session=this.sessionFactory.getCurrentSession();
 		Query query = session.createSQLQuery("delete from userdefine where  1=1");
 		query.executeUpdate();
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
+	public List<Gaokao_subjectchapter> getGaokao_subjectchapter(String jsonString){
+		Session session=this.sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery("select subjectchapterid,subjectid,chaptername from gaokao_subjectchapter where subjectid = :v_subjectid ").addEntity(Gaokao_subjectchapter.class);
+        query.setParameter("v_subjectid",jsonString);
+       
+		return query.list();
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
+	public List<Gaokao_subjectchapter> getGaokao_labelclassification(String jsonString){
+		Session session=this.sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery("select labelclassificationid,subjectid,labelname from gaokao_labelclassification where subjectid = :v_subjectid ").addEntity(Gaokao_labelclassification.class);
+        query.setParameter("v_subjectid",jsonString);
+		return query.list();
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=false)
+	public void updateGaokao_labelclassification(JSONArray jsonArray){
+		JSONObject jsonObject;
+		
+		Session session=this.sessionFactory.getCurrentSession();
+		for(int i=0;i<jsonArray.size();i++){
+			jsonObject=jsonArray.getJSONObject(i);
+		
+			
+			
+			Query query = session.createSQLQuery("select vedioartitle_sequence.nextval from dual");
+			
+			java.math.BigDecimal currentID = (java.math.BigDecimal)query.list().iterator().next();
+			
+			Integer ID = new Integer(currentID.toString());
+			
+			
+			
+			Gaokao_labelclassification gaokao_labelclassification= new Gaokao_labelclassification();
+			gaokao_labelclassification.setLabelclassificationid(ID);
+			
+			try{
+				gaokao_labelclassification.setSubjectid(jsonObject.getString("subject"));
+			}catch(Exception e){}
+			try{
+				gaokao_labelclassification.setLabelname(jsonObject.getString("label").trim());
+			}catch(Exception e){}
+					this.SaveObject(gaokao_labelclassification);
+		}		
+	
+		
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=false)
+	public void updateGaokao_subjectchapter(JSONArray jsonArray){
+		JSONObject jsonObject;
+		
+		Session session=this.sessionFactory.getCurrentSession();
+		for(int i=0;i<jsonArray.size();i++){
+			jsonObject=jsonArray.getJSONObject(i);
+		
+			
+			
+			Query query = session.createSQLQuery("select vedioartitle_sequence.nextval from dual");
+			
+			java.math.BigDecimal currentID = (java.math.BigDecimal)query.list().iterator().next();
+			
+			Integer ID = new Integer(currentID.toString());
+			
+			
+			
+			Gaokao_subjectchapter gaokao_subjectchapter= new Gaokao_subjectchapter();
+			gaokao_subjectchapter.setSubjectchapterid(ID);
+			
+			try{
+				gaokao_subjectchapter.setSubjectid(jsonObject.getString("subject"));
+			}catch(Exception e){}
+			try{
+				gaokao_subjectchapter.setChaptername(jsonObject.getString("chapter").trim());
+			}catch(Exception e){}
+					this.SaveObject(gaokao_subjectchapter);
+		}		
+	
+		
+	}
+	
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=false)
+	public void updateGaokao_videoartitle(JSONArray jsonArray){
+		/*
+		 * subject,title,videoartitle,url,publication,label,chapter,keyword,
+		 * relationimage,comments
+		 */
+		JSONObject jsonObject;		
+		Integer ID=0;
+		Session session=this.sessionFactory.getCurrentSession();
+		for(int i=0;i<jsonArray.size();i++){
+			jsonObject=jsonArray.getJSONObject(i);
+			//System.out.println(i);
+			try{
+				if(jsonObject.getInt("vedioartitleid")<1){
+					Query query = session.createSQLQuery("select vedioartitle_sequence.nextval from dual");
+					java.math.BigDecimal currentID = (java.math.BigDecimal)query.list().iterator().next();
+					ID = new Integer(currentID.toString());
+				}else{
+					ID=jsonObject.getInt("vedioartitleid");
+				}
+			}catch(Exception e){}
+			
+			
+			Gaokao_vedioartitle vedioartitle=new Gaokao_vedioartitle();
+			vedioartitle.setVedioartitleid(ID);
+			/*
+			 * subject,title,videoartitle,url,publication,label,chapter,keyword,
+			 * relationimage,comments
+			 */
+			try{
+				vedioartitle.setSubjectid(jsonObject.getString("subject").trim());
+			}catch(Exception e){}
+			try{
+				vedioartitle.setTitle(jsonObject.getString("title").trim());
+			}catch(Exception e){}
+			try{
+				vedioartitle.setTypeid(jsonObject.getString("videoartitle").trim());
+			}catch(Exception e){}
+			try{
+				vedioartitle.setUrl(jsonObject.getString("url").trim());
+			}catch(Exception e){}
+			try{
+				vedioartitle.setKeyword(jsonObject.getString("keyword").trim());
+			}catch(Exception e){}
+			try{
+				vedioartitle.setImageurl(jsonObject.getString("relationimage").trim());
+			}catch(Exception e){}
+			try{
+				vedioartitle.setComments(jsonObject.getString("comments").trim());
+			}catch(Exception e){}
+			vedioartitle.setInputdate(new Date());
+			try{
+				vedioartitle.setPublication(MyTools.strToDate(jsonObject.getString("publication")));
+			}catch(Exception e){vedioartitle.setPublication(new Date());}
+			
+			try{
+				vedioartitle.setLabelclassificationid(new Integer(jsonObject.getString("label")));				
+			}catch(Exception e){}
+			try{
+				vedioartitle.setSubjectchapterid(new Integer(jsonObject.getString("chapter")));				
+			}catch(Exception e){}
+			try{
+				vedioartitle.setVedio(jsonObject.getString("vedio").trim());
+			}catch(Exception e){}
+			try{
+				vedioartitle.setContent(jsonObject.getString("content").trim());
+			}catch(Exception e){}
+			try{
+				vedioartitle.setLearn(jsonObject.getString("learn").trim());
+			}catch(Exception e){}
+			try{
+				vedioartitle.setStay(jsonObject.getString("stay").trim());
+			}catch(Exception e){}
+			try{
+				if("0".equals(jsonObject.getString("look"))){//记录观看日期
+					Gaokao_lookrec gaokao_lookrec=new Gaokao_lookrec();
+					gaokao_lookrec.setVedioartitleid(ID);
+					gaokao_lookrec.setLookdate(new Date());
+					this.SaveObject(gaokao_lookrec);
+				}
+			}catch(Exception e){}
+			
+			/*
+			 * publication,label,chapter
+			 *
+			try{
+				JSONArray jsonArrayLabel=JSONArray.fromObject(jsonObject.getString("label"));
+				for(int j=0;j<jsonArrayLabel.size();j++){
+					str_Label=jsonArrayLabel.getString(j);
+					vedioartitle.setLabelclassificationid(new Integer(str_Label.toString()));
+				}				
+			}catch(Exception e){}
+			try{
+				JSONArray jsonArrayChapter=JSONArray.fromObject(jsonObject.getString("chapter"));
+				for(int j=0;j<jsonArrayChapter.size();j++){
+					str_Chapter=jsonArrayChapter.getString(j);
+					vedioartitle.setSubjectchapterid(new Integer(str_Chapter.toString()));
+				}
+			}catch(Exception e){}	
+			*/
+			this.SaveObject(vedioartitle);
+		}		
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
+	public Integer whetherExistenceUrl(String jsonString){
+		String[] splitUrl=jsonString.trim().split("/");
+		if(splitUrl.length>0){
+			Session session=this.sessionFactory.getCurrentSession();
+			Query query = session.createSQLQuery("select count(*) from gaokao_vedioartitle  where url   like :v_url");
+			query.setParameter("v_url","%"+splitUrl[splitUrl.length-1]+"%");
+			java.math.BigDecimal urlcount = (java.math.BigDecimal)query.list().iterator().next();
+			
+			return new Integer(urlcount.toString());
+		}
+		return new Integer(0);
+		
+		
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
+	public List<Gaokao_vedioartitle>   getGaokao_vedioartitle(String jsonString){
+		System.out.println(jsonString);
+		
+		String sql="select o.vedioartitleid,o.title,o.url,o.subjectid,o.typeid,o.keyword,o.imageurl,"+
+		"o.comments,o.publication,o.inputdate,o.labelclassificationid,o.subjectchapterid,q.labelname as labelclassificationname,s.chaptername as subjectchaptername"+	
+		",o.vedio,o.content,o.learn,o.stay,t.readcount,z.maxlookdate "+
+		" from (select * from gaokao_vedioartitle  "+jsonString+" ) o,"+
+		" (select a.vedioartitleid,b.labelname from gaokao_vedioartitle a,gaokao_labelclassification b where a.labelclassificationid=b.labelclassificationid)  q , "+
+		" (select a.vedioartitleid,b.chaptername from gaokao_vedioartitle a,gaokao_subjectchapter b where a.subjectchapterid=b.subjectchapterid) s ,"+
+		" (select a.vedioartitleid,count(*) as readcount from gaokao_lookrec a group by a.vedioartitleid) t ,"+
+		" (select a.vedioartitleid,to_char(max(a.lookdate),'yyyy-mm-dd') as maxlookdate from gaokao_lookrec a group by a.vedioartitleid) z "+
+		" where  o.vedioartitleid=q.vedioartitleid(+) and o.vedioartitleid=s.vedioartitleid(+) and o.vedioartitleid=t.vedioartitleid(+) and o.vedioartitleid=z.vedioartitleid(+) order by o.publication desc,o.vedioartitleid desc";
+		//System.out.println(sql);
+		Session session=this.sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery(sql).addEntity(Gaokao_vedioartitleSendPhone.class);
+		return query.list();
+		
+		
 	}
 }

@@ -417,4 +417,46 @@ public class JsonAction  extends ActionSupport {
 		this.gupiaoDAO.deleteScalewarm(JSONArray.fromObject(jsonString));
 		return "success";
 	}
+	public String updateGaokao_videoartitle(){		
+		this.gupiaoDAO.updateGaokao_videoartitle(JSONArray.fromObject(jsonString));
+		return "success";
+	}
+	public String getGaokao_labelclassification(){
+		setResultTree(JSONArray.fromObject(this.gupiaoDAO.getGaokao_labelclassification(jsonString)));
+		return "success";
+	}
+	public String getGaokao_subjectchapter(){		
+		setResultTree(JSONArray.fromObject(this.gupiaoDAO.getGaokao_subjectchapter(jsonString)));
+		return "success";
+	}
+	public String updateGaokao_labelclassification(){
+		this.gupiaoDAO.updateGaokao_labelclassification(JSONArray.fromObject(jsonString));
+		return "success";
+	}
+	public String updateGaokao_subjectchapter(){
+		System.out.println(jsonString);
+		this.gupiaoDAO.updateGaokao_subjectchapter(JSONArray.fromObject(jsonString));
+		return "success";
+	}
+	public String whetherExistenceUrl(){
+		
+		
+		Integer urlcounts= this.gupiaoDAO.whetherExistenceUrl(jsonString);
+		
+		
+		
+		JSONObject jsObject = new JSONObject();
+		jsObject.put("success", true);
+		jsObject.put("urlcounts",urlcounts);
+		setJsonObject(jsObject);
+		 
+		return "success";
+	}
+	public String getGaokao_vedioartitle(){
+		JsonConfig config = new JsonConfig();  
+		config.registerJsonValueProcessor(java.sql.Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd"));  
+		
+		setResultTree(JSONArray.fromObject(gupiaoDAO.getGaokao_vedioartitle(jsonString),config));
+		return "success";
+	}
 }

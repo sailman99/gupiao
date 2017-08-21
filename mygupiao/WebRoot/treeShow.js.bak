@@ -25,13 +25,13 @@ var treestore = Ext.create('Ext.data.TreeStore', {
             }
             ,
             {
-                text: 'CYCWARM数据',
+                text: '比例回调数据',
                 leaf: true,
                 width:'100%',
                 id:'treeitem104'           
             },
             {
-                text: 'SCALEWARM数据',
+                text: '突破EXPMA线数据',
                 leaf: true,
                 width:'100%',
                 id:'treeitem105'           

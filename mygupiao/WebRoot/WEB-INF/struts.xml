@@ -70,6 +70,41 @@
                     <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
             </result>     
         </action>  
+         <action name="JsonActiongetGaokao_labelclassification"     class="jsonAction" method="getGaokao_labelclassification">    
+		 	<result type="json">  
+                    <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
+            </result>     
+        </action>  
+         <action name="JsonActiongetGaokao_subjectchapter"     class="jsonAction" method="getGaokao_subjectchapter">    
+		 	<result type="json">  
+                    <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
+            </result>     
+        </action> 
+        <action name="JsonActiongetGaokao_vedioartitle"     class="jsonAction" method="getGaokao_vedioartitle">    
+		 	<result type="json">  
+                    <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
+            </result>     
+        </action>  
+               
+        <action name="JsonActionUpdateGaokao_labelclassification"     class="jsonAction" method="updateGaokao_labelclassification">    
+		 	<result type="json">  
+                   <param name="root">jsonObject</param>       <!-- 返回结果是JsonAction的字段resultTree,用参数root -->
+                   <param name="contentType">text/html</param>    
+            </result>       
+        </action>  
+        <action name="JsonActionUpdateGaokao_subjectchapter"     class="jsonAction" method="updateGaokao_subjectchapter">    
+		 	<result type="json">  
+                   <param name="root">jsonObject</param>       <!-- 返回结果是JsonAction的字段resultTree,用参数root -->
+                   <param name="contentType">text/html</param>    
+            </result>       
+        </action>  
+        <action name="JsonActionwhetherExistenceUrl"     class="jsonAction" method="whetherExistenceUrl">    
+		 	<result type="json">  
+                   <param name="root">jsonObject</param>       <!-- 返回结果是JsonAction的字段resultTree,用参数root -->
+                   <param name="contentType">text/html</param>    
+            </result>       
+        </action> 
+        
         <action name="JsonActionupdateTrendlines"     class="jsonAction" method="updateTrendlines">    
 		 	<result type="json">  
                    <param name="root">jsonObject</param>       <!-- 返回结果是JsonAction的字段resultTree,用参数root -->
@@ -82,7 +117,13 @@
                    <param name="contentType">text/html</param>    
             </result>       
         </action> 
-         <action name="JsonActionUpdateUserdefine"     class="jsonAction" method="updateUserdefine">    
+        <action name="JsonActionUpdateUserdefine"     class="jsonAction" method="updateUserdefine">    
+		 	<result type="json">  
+                   <param name="root">jsonObject</param>       <!-- 返回结果是JsonAction的字段resultTree,用参数root -->
+                   <param name="contentType">text/html</param>    
+            </result>       
+        </action> 
+        <action name="JsonActionUpdateGaokao_videoartitle"     class="jsonAction" method="updateGaokao_videoartitle">    
 		 	<result type="json">  
                    <param name="root">jsonObject</param>       <!-- 返回结果是JsonAction的字段resultTree,用参数root -->
                    <param name="contentType">text/html</param>    
