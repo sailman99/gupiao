@@ -15,7 +15,13 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jms.core.MessageCreator;
+
+
+
+
 
 
 
@@ -27,11 +33,18 @@ import org.springframework.jms.core.MessageCreator;
 
 import com.gupiao.model.dao.GupiaoDAO;
 import com.gupiao.model.persist.entity.Cycwarm;
+import com.gupiao.model.persist.entity.Dazhongjiaoyi;
+import com.gupiao.model.persist.entity.Gubanjiegou;
+import com.gupiao.model.persist.entity.Gupiao;
+import com.gupiao.model.persist.entity.Gupiaoshuju;
 import com.gupiao.model.persist.entity.Inoutprice;
+import com.gupiao.model.persist.entity.Rzzgs;
 import com.gupiao.model.persist.entity.Scalewarm;
 import com.gupiao.model.persist.entity.Sendemail;
 import com.gupiao.model.persist.entity.Trendlines;
 import com.gupiao.socket.MyProtocolHandler;
+
+
 public class TaskJob_new{
 
 	
@@ -133,6 +146,47 @@ public class TaskJob_new{
 	    * 244703,13.99,336878,14.00,108773,14.01,269800,14.02,87655,14.03,2015-02-27,15:05:53,00";
 	    */
 
+		
+		public  void manipulation_data(String tempurl) throws Exception{
+			String[] sinajs;
+			
+			String   str_gupiaodaima;
+			  
+			int i_position=0;
+		   
+			Gupiaoshuju gupiaoshuju=new Gupiaoshuju();
+			
+			String tempsinajs = MyTools.inputStream2String(MyTools.readHttmnew(tempurl));
+		   
+			String[] sinashuju=tempsinajs.split(";");
+			for(int i=0;i<sinashuju.length;i++){
+				i_position = sinashuju[i].indexOf("str");
+				if(i_position>0){
+					str_gupiaodaima=sinashuju[i].substring(i_position+6,i_position+12);
+					sinajs=sinashuju[i].split(",");
+					
+					if(sinajs.length>10 && MyTools.StrToDouble(sinajs[5])>0){
+						gupiaoshuju.setGupiaodaima(str_gupiaodaima);
+						gupiaoshuju.setRiqi(MyTools.strToDate(sinajs[30].replaceAll("-", "")));
+						gupiaoshuju.setKaipan(MyTools.StrToDouble(sinajs[1]));
+						gupiaoshuju.setZuigao(MyTools.StrToDouble(sinajs[4]));
+						gupiaoshuju.setZuidi(MyTools.StrToDouble(sinajs[5]));
+						gupiaoshuju.setShoupan(MyTools.StrToDouble(sinajs[3]));
+						gupiaoshuju.setChengjiaoshou(MyTools.StrToDouble(sinajs[8]));
+						gupiaoshuju.setChengjiaojiner(MyTools.StrToDouble(sinajs[9]));
+						gupiaoDAO.SaveObject(gupiaoshuju);
+					}
+				}
+			}
+		}
+		
+		
+		
+		
+		
+		
+		
+		
 
 		public void manipulation_data(List<Inoutprice> inoutprice_list,List<Trendlines> trendlines_list,List<Cycwarm> cycwarm_list,List<Scalewarm> scalewarm_list,String tempurl) throws Exception{
 	    	   
@@ -260,6 +314,115 @@ public class TaskJob_new{
 				}
 	       }
 	       
+		   public void genericGupiaoshuju() throws Exception{
+			   String str_gupiaodaima,tempurl="";
+				
+				
+				int i_count=0;
+				
+				
+				
+				List<Gupiao> list =gupiaoDAO.getAllGupiao();
+				
+				
+				for(Gupiao gupiao:list){
+		    	    	str_gupiaodaima=gupiao.getGupiaodaima();
+		    	    	if(i_count<100){	    			  
+						  tempurl=MyTools.makeurl(tempurl,str_gupiaodaima,i_count); 
+						  i_count++;
+		    		    }
+					    else{		
+						  tempurl=MyTools.makeurl(tempurl,str_gupiaodaima,i_count);
+						  i_count=0;
+						  manipulation_data(tempurl);
+						  tempurl="";
+					    }
+				}
+	    	    if(i_count>0)
+	    	    	manipulation_data(tempurl);
+			
+			
+	    	    List<Dazhongjiaoyi> list_dazhongjiaoyi=MyTools.getDazhongjiaoyiByOneHtml();
+	    		if(null!=list_dazhongjiaoyi){
+	    			for(Dazhongjiaoyi dazhongjiaoyi:list_dazhongjiaoyi){
+	    				gupiaoDAO.SaveObject(dazhongjiaoyi);
+	    				
+	    			}
+	    			
+	    		}
+	    		
+				
+	    		gupiaoDAO.generate_gupiaoshujus();//生成换手率
+				
+	    		gupiaoDAO.generate_gupiaoshujuhuanshou();//生成换手率5,10,...
+				
+	    		gupiaoDAO.generic_gupiaoshujucyc();//生成CYC
+				
+	    		gupiaoDAO.generic_zuidicyc();//
+				
+	    		gupiaoDAO.generic_zuoshouzhangfu();
+				
+	    		gupiaoDAO.generic_genericcyc55zhouqi();
+				
+	    		gupiaoDAO.generic_updatetrendlines();
+				
+	    		gupiaoDAO.generic_updatescalewarm();
+				
+	    		gupiaoDAO.generic_updatecycwarm();
+				
+	    		gupiaoDAO.generichuanshou30cyc34count();
+				
+		   }
+		
+		   public void genericGubenjiegou() throws Exception {
+			    String tmpurl;
+				
+			    List<Gupiao> listgupiao=gupiaoDAO.getAllGupiao();
+				for(Gupiao gupiao:listgupiao){
+					String str_gupiaodaima = gupiao.getGupiaodaima();
+					tmpurl="http://stockdata.stock.hexun.com/2009_gbjg_"+str_gupiaodaima+".shtml";
+				
+					List<Gubanjiegou> list=MyTools.getGubenjiegou(tmpurl, str_gupiaodaima);
+					if(null!=list){						
+						for(Gubanjiegou gubanjiegou:list){							
+							 if(null != gubanjiegou && null !=gubanjiegou.getGupiaodaima() && null != gubanjiegou.getRiqi()){
+								 gupiaoDAO.SaveObject(gubanjiegou);
+							 }
+						}
+					}
+				}
+		   }
+		   public void genericRzzgs() throws Exception {
+			    String tmpurl ;
+				
+				
+				
+				List<Gupiao> listgupiao=gupiaoDAO.getAllGupiao();
+				
+				for(Gupiao gupiao:listgupiao)
+				{
+					       
+					String str_gupiaodaima = gupiao.getGupiaodaima();
+					
+					tmpurl="http://stockdata.stock.hexun.com/2009_cgjzd_"+str_gupiaodaima+".shtml";
+				
+					Date maxriqi=gupiaoDAO.getRzzgsMaxDate(str_gupiaodaima);
+					List<Rzzgs> list=MyTools.getRzzgsnew(tmpurl, str_gupiaodaima,maxriqi);
+					if(null!=list){
+						Iterator<Rzzgs> iter=list.iterator();
+						while(iter.hasNext()){
+							Rzzgs rzzgs   = (Rzzgs) iter.next(); 	
+							 if(null != rzzgs  && null !=rzzgs .getGupiaodaima() && null != rzzgs.getRiqi()){
+								 
+								 gupiaoDAO.SaveObject(rzzgs);
+							 }
+						}
+					}
+				}
+				gupiaoDAO.generic_updaterzzgsjsqbh2();
+			}
+				
+		  
 	       public void SendMailofInoutPrice() throws Exception {
 	    	   
 	    	    String tempstr = "",tempurl="";

@@ -7,17 +7,20 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 
 import javax.imageio.ImageIO;
@@ -30,14 +33,26 @@ import javax.mail.internet.MimeMessage;
 
 
 
+
+
+
+
+
+
+
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.io.IOUtils;
 
-import com.gupiao.model.persist.entity.Inoutprice;
+import com.gupiao.model.persist.entity.Dazhongjiaoyi;
+import com.gupiao.model.persist.entity.Gubanjiegou;
+import com.gupiao.model.persist.entity.Rzzgs;
+
+
 
 
 
@@ -46,6 +61,75 @@ import com.gupiao.model.persist.entity.Inoutprice;
 
 
 public class MyTools {
+	
+	  
+    public static class SearchAndReturn{
+		private String str_search;  //传进要被搜索的字符串
+		private String str_position1;//初始定位
+		private String str_position2;//准确定位开始
+		private String str_position3;//准确定位结束
+		private String str_return;//结果
+		private int int_position;
+		
+		public int getInt_position() {
+			return int_position;
+		}
+		public String search(){
+			if(!isNullOrEmpty(str_position1)){
+				int_position = str_search.indexOf(str_position1);//初始定位
+				if(int_position>-1)
+					str_search=str_search.substring(int_position+str_position1.length());//截取后一段
+				else
+					return null;				
+			}
+			int_position = str_search.indexOf(str_position2);//准确定位开始
+			if(int_position>-1){
+				str_search=str_search.substring(int_position+str_position2.length());//截取后一段
+				int_position = str_search.indexOf(str_position3);
+				if(int_position>-1){
+					str_return=str_search.substring(0,int_position);
+					str_search=str_search.substring(int_position+str_position3.length());//截取后一段
+					return str_return;
+				}
+			}
+			return null;
+			
+		}
+		public void str_split(){//利用初始定位截取后一段
+			if(!isNullOrEmpty(str_position1)){
+				int_position = str_search.indexOf(str_position1);
+				str_search=str_search.substring(int_position+str_position1.length());//截取后一段
+			}
+		}
+		public String getStr_search() {
+			return str_search;
+		}
+		public void setStr_search(String str_search) {
+			this.str_search = str_search;
+		}
+		public String getStr_position1() {
+			return str_position1;
+		}
+		public void setStr_position1(String str_position1) {
+			this.str_position1 = str_position1;
+		}
+		public String getStr_position2() {
+			return str_position2;
+		}
+		public void setStr_position2(String str_position2) {
+			this.str_position2 = str_position2;
+		}
+		public String getStr_position3() {
+			return str_position3;
+		}
+		public void setStr_position3(String str_position3) {
+			this.str_position3 = str_position3;
+		}
+		
+		
+	}
+	
+	
 	
 	 public static String getJiaoYiShuoYahoo(String gupiaodaima){//���ؽ�������
 			if(MyTools.StrToDouble(gupiaodaima).intValue()<600000)
@@ -1221,6 +1305,501 @@ public static void SendMailBy163(String subject,String msg) {
 		}
 		return tempurl;
 	}
+	public  static boolean fileIsExists(String strFile)	    {
+	        try
+	        {
+	            File f=new File("F://VDownload/"+strFile+".mp4");
+	            if(!f.exists())
+	            {
+	                return false;
+	            }
+
+	        }
+	        catch (Exception e)
+	        {
+	            return false;
+	        }
+
+	        return true;
+	    }
 	
+	public static List<Dazhongjiaoyi>  getDazhongjiaoyi(String tempurl,String gupiaodaima){
+		String str;	
+		String tmp_str="";
+		int int_position,int_rows,int_records;
+		
+		String str_date="";//日期变量
+		SearchAndReturn searchAndReturn = new SearchAndReturn();//搜索定位类
+		
+		List<Dazhongjiaoyi> list = new ArrayList();
+		
+		
+		
+		try{
+				tmp_str = MyTools.readHttm(tempurl);
+				searchAndReturn.setStr_search(tmp_str);//设置被搜索的字符串
+				searchAndReturn.setStr_position1("卖方营业部</th>");
+				searchAndReturn.setStr_position2("<tr class=\"list_eve\">");//从str_position2开始
+				searchAndReturn.setStr_position3("</table>");
+				tmp_str=searchAndReturn.search();
+				searchAndReturn.setStr_search(tmp_str);//设置被搜索的字符串
+				searchAndReturn.setStr_position1("<td rowspan");
+				searchAndReturn.setStr_position2("=\"");
+				searchAndReturn.setStr_position3("</tr>");
+				while((str=searchAndReturn.search())!=null){//在这已经读一行了
+					//先要判断有几行
+					int_position=str.indexOf("\"");//定位有几行
+					if(int_position>0){
+						int_rows=Integer.valueOf(str.substring(0,int_position)).intValue();
+					}
+					else{
+						int_rows=0;
+					}
+					//在这要分析出第一行的内容
+					int_position=str.indexOf(">");
+					if(int_position>0){
+						str_date=str.substring(int_position+1,int_position+1+10);
+						
+						str=str.substring(int_position+1+10);
+						int_records=0;
+						Dazhongjiaoyi dazhongjiaoyi=new Dazhongjiaoyi();
+						dazhongjiaoyi.setGupiaodaima(gupiaodaima);
+						dazhongjiaoyi.setRiqi(MyTools.strToDate(str_date));
+						while((int_position=str.indexOf("<td class=\"r_6\">"))>-1){
+							str=str.substring(int_position+"<td class=\"r_6\">".length());			
+							int_records++;
+							if((int_position=str.indexOf("</td>"))>0){
+								if(int_records==1){
+									dazhongjiaoyi.setChengjiaojiage(MyTools.StrToDouble(str.substring(0,int_position)));
+								}
+								if(int_records==2){
+									dazhongjiaoyi.setChengjiaoshulian(MyTools.StrToDouble(str.substring(0,int_position)));
+								}
+								if(int_records==3){
+									dazhongjiaoyi.setChengjiaojiner(MyTools.StrToDouble(str.substring(0,int_position)));
+								}
+								
+							}
+							
+							//System.out.println(str);
+						}
+						int_records=0;
+						while((int_position=str.indexOf("<td>"))>-1){
+							str=str.substring(int_position+"<td>".length());
+							
+							int_records++;
+							if((int_position=str.indexOf("</td>"))>-1){
+								if(int_records==1){
+									dazhongjiaoyi.setBuyer(str.substring(0,int_position));
+								}
+								if(int_records==2){
+									dazhongjiaoyi.setSeller(str.substring(0,int_position));
+								}
+								
+								
+							}
+						}
+						list.add(dazhongjiaoyi);
+					}
+					while(--int_rows>0){//在这要补充读多几行
+						searchAndReturn.setStr_position1("<tr class=\"list_eve\"");
+						searchAndReturn.setStr_position2(">");
+						searchAndReturn.setStr_position3("</tr>");
+						str=searchAndReturn.search();
+						
+						Dazhongjiaoyi dazhongjiaoyi=new Dazhongjiaoyi();
+						dazhongjiaoyi.setGupiaodaima(gupiaodaima);
+						dazhongjiaoyi.setRiqi(MyTools.strToDate(str_date,int_rows));
+						int_records=0;
+						while((int_position=str.indexOf("<td class=\"r_6\">"))>-1){
+							str=str.substring(int_position+"<td class=\"r_6\">".length());
+							
+							int_records++;
+							if((int_position=str.indexOf("</td>"))>-1){
+								if(int_records==1){
+									dazhongjiaoyi.setChengjiaojiage(MyTools.StrToDouble(str.substring(0,int_position)));
+								}
+								if(int_records==2){
+									dazhongjiaoyi.setChengjiaoshulian(MyTools.StrToDouble(str.substring(0,int_position)));
+								}
+								if(int_records==3){
+									dazhongjiaoyi.setChengjiaojiner(MyTools.StrToDouble(str.substring(0,int_position)));
+								}
+							}
+							
+							//System.out.println(str);
+						}
+						int_records=0;
+						while((int_position=str.indexOf("<td>"))>-1){
+							str=str.substring(int_position+"<td>".length());
+							int_records++;
+							if((int_position=str.indexOf("</td>"))>-1){
+								if(int_records==1){
+									dazhongjiaoyi.setBuyer(str.substring(0,int_position));
+								}
+								if(int_records==2){
+									dazhongjiaoyi.setSeller(str.substring(0,int_position));
+								}
+								
+								
+							}
+						}
+						list.add(dazhongjiaoyi);
+					}
+					//恢复原来设计
+					searchAndReturn.setStr_position1("<td rowspan");
+					searchAndReturn.setStr_position2("=\"");
+					searchAndReturn.setStr_position3("</tr>");
+				}
+				
+				
+			
+			
 	
+		}catch(Exception e){
+			System.out.println("Exception");
+			return null;
+		}
+		return list;
+			//tmp_str = MyTools.filetoStr(tempurl);//先读文件，完成后删除这句,用上一条
+			
+			
+	}
+	public static List<Dazhongjiaoyi>  getDazhongjiaoyiByOneHtml(){
+		String str,tmp_str="",str_gupiaodaima="";	
+		
+		int int_position,int_rows=0,int_records;
+		
+		String str_date="";//日期变量
+		SearchAndReturn searchAndReturn = new SearchAndReturn();//搜索定位类
+	
+		List<Dazhongjiaoyi> list = new ArrayList();
+		
+		
+		
+		try{
+				tmp_str = MyTools.readHttm("http://data.eastmoney.com/dzjy/default.html");
+				searchAndReturn.setStr_search(tmp_str);//设置被搜索的字符串
+				searchAndReturn.setStr_position1("<th>卖方营业部");
+				searchAndReturn.setStr_position2("</th>");//从str_position2开始
+				searchAndReturn.setStr_position3("</table>");
+				tmp_str=searchAndReturn.search();
+				searchAndReturn.setStr_search(tmp_str);//设置被搜索的字符串
+				searchAndReturn.setStr_position1("");
+				searchAndReturn.setStr_position2("<tr class=\"list_eve\">");
+				searchAndReturn.setStr_position3("</tr>");
+				
+				while((str=searchAndReturn.search())!=null){//在这已经读一行了
+					
+					//定位是否有日期
+					int_position=str.indexOf("<strong>");
+					if(int_position>-1){//提取日期
+						str_date=str.substring(int_position+"<strong>".length(),int_position+"<strong>".length()+10);
+					}
+					
+					
+					//提取股票代码
+					int_position=str.indexOf(".html\">");
+					
+					if(int_position>-1){
+						str_gupiaodaima=str.substring(int_position+".html\">".length(),int_position+".html\">".length()+6);
+						int_rows=0;
+					}else{//如果提取不到股票代码，表明这是同一股票的另一行
+						int_rows++;
+						
+					}
+					//读取剩余的行
+					
+					
+					int_records=0;
+					Dazhongjiaoyi dazhongjiaoyi=new Dazhongjiaoyi();
+					dazhongjiaoyi.setGupiaodaima(str_gupiaodaima);
+					dazhongjiaoyi.setRiqi(MyTools.strToDate(str_date,int_rows));
+					while((int_position=str.indexOf("<td class=\"r_6\">"))>-1){
+						str=str.substring(int_position+"<td class=\"r_6\">".length());			
+						int_records++;
+						if((int_position=str.indexOf("</td>"))>-1){
+							if(int_records==1){
+								dazhongjiaoyi.setChengjiaojiage(MyTools.StrToDouble(str.substring(0,int_position)));
+							}
+							if(int_records==2){
+								dazhongjiaoyi.setChengjiaoshulian(MyTools.StrToDouble(str.substring(0,int_position)));
+							}
+							if(int_records==3){
+								dazhongjiaoyi.setChengjiaojiner(MyTools.StrToDouble(str.substring(0,int_position)));
+							}
+						}
+					}
+					int_records=0;
+					while((int_position=str.indexOf("<td>"))>-1){
+						str=str.substring(int_position+"<td>".length());
+						
+						int_records++;
+						if((int_position=str.indexOf("</td>"))>-1){
+							if(int_records==1){
+								dazhongjiaoyi.setBuyer(str.substring(0,int_position));
+							}
+							if(int_records==2){
+								dazhongjiaoyi.setSeller(str.substring(0,int_position));
+							}
+						}
+					}
+					list.add(dazhongjiaoyi);
+				}
+		}catch(Exception e){
+			System.out.println("Exception");
+			return null;
+		}
+		return list;
+			//tmp_str = MyTools.filetoStr(tempurl);//先读文件，完成后删除这句,用上一条
+			
+			
+	}
+
+	
+	 public static java.util.Date strToDate(String aStrValue,int int_minute){
+		 String str_year,str_month,str_day;
+		 aStrValue=aStrValue.replaceAll("-","").replaceAll("/","");
+		 if(aStrValue.length()==8){
+				str_year =aStrValue.substring(0,4);
+				str_month=aStrValue.substring(4,6);
+				str_day=aStrValue.substring(6);
+				
+				GregorianCalendar da = new GregorianCalendar(StrToDouble(str_year).intValue(),StrToDouble(str_month).intValue()-1,StrToDouble(str_day).intValue(),21,0,int_minute);   
+				
+				java.util.Date time = da.getTime();   
+				java.sql.Date sqlDate = new java.sql.Date(time.getTime()); 
+				return sqlDate;
+		 }
+		 return null;
+    }  
+	 public static java.util.Date strToDate(String aStrValue,String strTime){
+		 String str_year,str_month,str_day;
+		 String[] str_time;
+		 str_time=strTime.split(":");
+		 aStrValue=aStrValue.replaceAll("-","").replaceAll("/","");
+		 if(aStrValue.length()==8){
+				str_year =aStrValue.substring(0,4);
+				str_month=aStrValue.substring(4,6);
+				str_day=aStrValue.substring(6);
+				
+				GregorianCalendar da = new GregorianCalendar(StrToDouble(str_year).intValue(),StrToDouble(str_month).intValue()-1,StrToDouble(str_day).intValue(),StrToDouble(str_time[0]).intValue(),StrToDouble(str_time[1]).intValue(),0);   
+				
+				java.util.Date time = da.getTime();   
+				java.sql.Date sqlDate = new java.sql.Date(time.getTime()); 
+				return sqlDate;
+		 }
+		 return null;
+    }  
+	 public static List getGubenjiegou(String tempurl,String gupiaodaima){
+			String tmp_str,str;
+
+			String str_date;//日期变量
+			SearchAndReturn searchAndReturn = new SearchAndReturn();//搜索定位类
+			Date date;
+			
+			List<Gubanjiegou> list=new ArrayList();
+			
+			try{
+				tmp_str = MyTools.readHttm(tempurl);
+				//tmp_str = MyTools.filetoStr(tempurl);//先读文件，完成后删除这句,用上一条
+				
+				searchAndReturn.setStr_search(tmp_str);
+				searchAndReturn.setStr_position1("股本结构");
+				searchAndReturn.str_split();//利用初始定位截取后一段
+				searchAndReturn.str_split();//利用初始定位截取后一段
+				searchAndReturn.str_split();//利用初始定位截取后一段
+				searchAndReturn.str_split();//利用初始定位截取后一段
+				Gubanjiegou gubanjiegou1= new Gubanjiegou();
+				//GubanjiegouId gubanjiegouId1 = new GubanjiegouId();
+				Gubanjiegou gubanjiegou2= new Gubanjiegou();
+				//GubanjiegouId gubanjiegouId2 = new GubanjiegouId();
+				Gubanjiegou gubanjiegou3= new Gubanjiegou();
+				//GubanjiegouId gubanjiegouId3 = new GubanjiegouId();
+				searchAndReturn.setStr_position1("align=\"center\"");
+				searchAndReturn.setStr_position2(">");
+				searchAndReturn.setStr_position3("</");
+				int k=3;
+				for(int i=0;i<k;i++){
+					
+					str=searchAndReturn.search();
+					if(!isNullOrEmpty(str)){
+
+
+						str=str.replaceAll("-","");
+						if(str.length()==8){
+							if(i==0){
+								
+								gubanjiegou1.setGupiaodaima(gupiaodaima);
+								gubanjiegou1.setRiqi(MyTools.strToDate(str));							
+							}
+							if(i==1){
+								
+								gubanjiegou2.setGupiaodaima(gupiaodaima);
+								gubanjiegou2.setRiqi(MyTools.strToDate(str));
+							}
+							if(i==2){
+								
+								gubanjiegou3.setGupiaodaima(gupiaodaima);
+								gubanjiegou3.setRiqi(MyTools.strToDate(str));
+							}						
+						}else{
+							k=1;
+							
+						}
+						
+						
+					}
+					
+					
+				}
+				
+				searchAndReturn.setStr_position1("人民币A股");
+				searchAndReturn.str_split();//利用初始定位截取后一段
+				searchAndReturn.setStr_position1("align=\"center\"");
+				for(int i=0;i<2*k;i++){
+					str=searchAndReturn.search();
+					if(!isNullOrEmpty(str)){
+						str=str.replaceAll("&nbsp;","").replaceAll(",","");
+						if(i==0)
+							gubanjiegou1.setAgulutonggushu(MyTools.StrToDouble(str));
+						if(i==2)
+							gubanjiegou2.setAgulutonggushu(MyTools.StrToDouble(str));
+						if(i==4)
+							gubanjiegou3.setAgulutonggushu(MyTools.StrToDouble(str));
+					}
+					
+				}
+				if(k==3){
+					list.add(gubanjiegou1);
+					list.add(gubanjiegou2);
+					list.add(gubanjiegou3);
+				}
+				if(k==2){
+					list.add(gubanjiegou1);
+					list.add(gubanjiegou2);				
+				}
+				if(k==1){
+					list.add(gubanjiegou1);		
+				}
+				return list;
+			}
+			catch(Exception e)
+			{
+				return null;
+			}
+		}
+	 public static Double getLtgZhongShu(String gupiaodaima){
+			String tmp_str;
+			Double d_liutonggushu=0.0;
+			String tempurla="http://f10.eastmoney.com/f10_v2/CapitalStockStructure.aspx?code="+getJiaoYiShuoYahoo(gupiaodaima)+gupiaodaima;
+			SearchAndReturn searchAndReturn = new SearchAndReturn();//搜索定位类
+			try{
+				tmp_str = IOUtils.toString(MyTools.readHttmnew(tempurla),"UTF-8");
+				
+				
+				searchAndReturn.setStr_search(tmp_str);
+				searchAndReturn.setStr_position1("流通股份合计</td>");
+				searchAndReturn.setStr_position2("<td class=\"tips-dataR\">");
+				searchAndReturn.setStr_position3("</td>");
+				searchAndReturn.str_split();//利用初始定位截取后一段
+				searchAndReturn.setStr_position1("");
+				
+				
+				
+				String str_liutonggushu=searchAndReturn.search();
+				
+				if(null!=str_liutonggushu){
+					str_liutonggushu=str_liutonggushu.replaceAll("	","").replaceAll(" ","").replaceAll("-","").replaceAll("\n", "").replaceAll("\r", "");
+					d_liutonggushu=StrToDouble(str_liutonggushu);
+					
+				}
+			}
+			catch(Exception e)
+			{
+				
+			}	
+			return d_liutonggushu;
+			
+			
+		}
+		
+	 public static List<Rzzgs>  getRzzgsnew(String tempurl,String gupiaodaima,Date maxriqi){
+			String tmp_str,str;
+			String str_date;//日期变量
+			Double d_ltg=0.0;//第一行股东总数,第一行人均持股数.
+			SearchAndReturn searchAndReturn = new SearchAndReturn();//搜索定位类
+			Date date;
+			
+			
+			List<Rzzgs> list=new ArrayList();
+			try{
+				tmp_str = MyTools.readHttm(tempurl);
+				//tmp_str = MyTools.filetoStr(tempurl);//先读文件，完成后删除这句,用上一条
+				
+				searchAndReturn.setStr_search(tmp_str);
+				searchAndReturn.setStr_position1("<strong>流通股（万股）</strong></td>");
+				searchAndReturn.setStr_position2("<span class=\"font10\">");
+				searchAndReturn.setStr_position3("</span>");
+				searchAndReturn.str_split();//利用初始定位截取后一段
+				searchAndReturn.setStr_position1("");
+		
+				d_ltg=getLtgZhongShu(gupiaodaima);
+				while(searchAndReturn.getInt_position()>-1){
+					
+						Rzzgs rzzgs= new Rzzgs();
+						rzzgs.setGupiaodaima(gupiaodaima);
+						rzzgs.setLtg(d_ltg);
+						rzzgs.setGenericriqi(new Date());
+						for(int i=0;i<6;i++){
+								str=searchAndReturn.search();
+								if(!isNullOrEmpty(str)){
+									
+									if(i==0){
+										str_date=str;
+										str_date=str_date.replaceAll("第1季", "0331").replaceAll("第2季", "0630").replaceAll("中期", "0630").replaceAll("前3季", "0930").replaceAll("年度", "1231").trim();								
+										String str_tmp=str_date.substring(0,2);
+										if(Integer.parseInt(str_tmp)>80){
+											str_date="19"+str_date.replaceAll("年", "");
+										}
+										else{
+											str_date="20"+str_date.replaceAll("年", "");
+										}
+										//System.out.println(str_date);
+										date = MyTools.strToDate(str_date.replaceAll("-",""));
+										rzzgs.setRiqi(date);								
+									}
+									if(i==1){
+										rzzgs.setGdzs(MyTools.StrToDouble(str));
+									}
+									if(i==2){
+										rzzgs.setRzzg(MyTools.StrToDouble(str));
+									}
+									if(i==3){
+										rzzgs.setJsqbh(MyTools.StrToDouble(str));
+									}
+									if(i==4){
+										rzzgs.setZgb(MyTools.StrToDouble(str));
+									}
+									if(i==5){
+										//list.add(rzzgs);
+									}
+								}
+						}
+						if(rzzgs.getRiqi().after(maxriqi)){
+							
+							list.add(rzzgs);
+						}
+				}
+				
+				//return list;
+			}
+			catch(Exception e)
+			{
+				
+			}
+			return list;
+			
+		}
+		
 }

@@ -459,4 +459,18 @@ public class JsonAction  extends ActionSupport {
 		setResultTree(JSONArray.fromObject(gupiaoDAO.getGaokao_vedioartitle(jsonString),config));
 		return "success";
 	}
+	public String getGaokao_vedioartitlefornoDownload(){
+		JsonConfig config = new JsonConfig();  
+		config.registerJsonValueProcessor(java.sql.Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd"));  
+		
+		setResultTree(JSONArray.fromObject(gupiaoDAO.getGaokao_vedioartitlefornoDownload(jsonString),config));
+		return "success";
+	}
+	public String downloadGaokao_vedioartitle(){
+		JsonConfig config = new JsonConfig();  
+		config.registerJsonValueProcessor(java.sql.Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd"));  
+		
+		setResultTree(JSONArray.fromObject(gupiaoDAO.downloadGaokao_vedioartitle(jsonString),config));
+		return "success";
+	}
 }

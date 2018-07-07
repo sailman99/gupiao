@@ -14,6 +14,8 @@ import com.gupiao.model.persist.entity.Cycwarm;
 import com.gupiao.model.persist.entity.Cycwarmtmp;
 import com.gupiao.model.persist.entity.Gaokao_subjectchapter;
 import com.gupiao.model.persist.entity.Gaokao_vedioartitle;
+import com.gupiao.model.persist.entity.Gaokao_vedioartitleSendPhone;
+import com.gupiao.model.persist.entity.Gupiao;
 import com.gupiao.model.persist.entity.Gupiaoshuju;
 import com.gupiao.model.persist.entity.Inoutprice;
 import com.gupiao.model.persist.entity.MbcjgsjsTemporary;
@@ -68,5 +70,18 @@ public interface GupiaoDAO {
 	public Integer whetherExistenceUrl(String jsonString);
 	public List<Gaokao_subjectchapter> getGaokao_subjectchapter(String jsonString);
 	public List<Gaokao_subjectchapter> getGaokao_labelclassification(String jsonString);
-	public List<Gaokao_vedioartitle>   getGaokao_vedioartitle(String jsonString);
+	public List<Gaokao_vedioartitle>   downloadGaokao_vedioartitle(String jsonString);
+	public List<Gaokao_vedioartitleSendPhone>   getGaokao_vedioartitle(String jsonString);
+	public List<Gaokao_vedioartitleSendPhone> getGaokao_vedioartitlefornoDownload(String jsonString);
+	public List<Gupiao> getAllGupiao();
+	public void generate_gupiaoshujus();
+	public void generate_gupiaoshujuhuanshou();
+	public void generic_gupiaoshujucyc();
+	public void generic_zuidicyc();
+	public void generic_zuoshouzhangfu();
+	public void generic_genericcyc55zhouqi();
+	public void generic_updatetrendlines();
+	public void generichuanshou30cyc34count();
+	public Date getRzzgsMaxDate(String gupiaodaima);
+	public void generic_updaterzzgsjsqbh2();
 }

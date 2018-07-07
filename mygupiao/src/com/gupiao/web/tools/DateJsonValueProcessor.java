@@ -1,6 +1,6 @@
 /** 
  * @FileName: DateJsonValueProcessor.java 
- * @Description: TODO(JsonÊı¾İÊ±¼ä¸ñÊ½×ª»¯Àà) 
+ * @Description: TODO(Jsonï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ê½×ªï¿½ï¿½ï¿½ï¿½) 
  * @Copyright: Copyright(C) 2010-2015 All rights Reserved 
  * @Company: ShenZhen  Information Technology Co.,LTD. 
  * @author: neil 
@@ -11,7 +11,7 @@
  * Date         Author        Version        Discription 
  * ----------------------------------------------------------------------------------- 
  * 2015-11-3       NEIL          1.0             1.0 
- * Why & What is modified: <ĞŞ¸ÄÔ­ÒòÃèÊö> 
+ * Why & What is modified: <ï¿½Ş¸ï¿½Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½> 
  */  
 package com.gupiao.web.tools;  
   
@@ -23,28 +23,7 @@ import net.sf.json.JsonConfig;
 import net.sf.json.processors.JsonValueProcessor;  
   
 public class DateJsonValueProcessor implements JsonValueProcessor {  
-    /** 
-     * ×ÖÄ¸ ÈÕÆÚ»òÊ±¼äÔªËØ ±íÊ¾ Ê¾Àı <br> 
-     * G Era ±êÖ¾·û Text AD <br> 
-     * y Äê Year 1996; 96 <br> 
-     * M ÄêÖĞµÄÔÂ·İ Month July; Jul; 07 <br> 
-     * w ÄêÖĞµÄÖÜÊı Number 27 <br> 
-     * W ÔÂ·İÖĞµÄÖÜÊı Number 2 <br> 
-     * D ÄêÖĞµÄÌìÊı Number 189 <br> 
-     * d ÔÂ·İÖĞµÄÌìÊı Number 10 <br> 
-     * F ÔÂ·İÖĞµÄĞÇÆÚ Number 2 <br> 
-     * E ĞÇÆÚÖĞµÄÌìÊı Text Tuesday; Tue<br> 
-     * a Am/pm ±ê¼Ç Text PM <br> 
-     * H Ò»ÌìÖĞµÄĞ¡Ê±Êı£¨0-23£© Number 0 <br> 
-     * k Ò»ÌìÖĞµÄĞ¡Ê±Êı£¨1-24£© Number 24<br> 
-     * K am/pm ÖĞµÄĞ¡Ê±Êı£¨0-11£© Number 0 <br> 
-     * h am/pm ÖĞµÄĞ¡Ê±Êı£¨1-12£© Number 12 <br> 
-     * m Ğ¡Ê±ÖĞµÄ·ÖÖÓÊı Number 30 <br> 
-     * s ·ÖÖÓÖĞµÄÃëÊı Number 55 <br> 
-     * S ºÁÃëÊı Number 978 <br> 
-     * z Ê±Çø General time zone Pacific Standard Time; PST; GMT-08:00 <br> 
-     * Z Ê±Çø RFC 822 time zone -0800 <br> 
-     */  
+   
   
     public static final String Default_DATE_PATTERN = "yyyy-MM-dd";  
     private DateFormat dateFormat;  

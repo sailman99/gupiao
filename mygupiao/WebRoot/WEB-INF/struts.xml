@@ -85,7 +85,16 @@
                     <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
             </result>     
         </action>  
-               
+         <action name="JsonActiongetGaokao_vedioartitlefornoDownload"     class="jsonAction" method="getGaokao_vedioartitlefornoDownload">    
+		 	<result type="json">  
+                    <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
+            </result>     
+        </action> 
+         <action name="JsonActionDownloadGaokao_vedioartitle"     class="jsonAction" method="downloadGaokao_vedioartitle">    
+		 	<result type="json">  
+                    <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
+            </result>     
+        </action>         
         <action name="JsonActionUpdateGaokao_labelclassification"     class="jsonAction" method="updateGaokao_labelclassification">    
 		 	<result type="json">  
                    <param name="root">jsonObject</param>       <!-- 返回结果是JsonAction的字段resultTree,用参数root -->

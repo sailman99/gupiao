@@ -28,6 +28,7 @@ import com.gupiao.model.persist.entity.Gaokao_vedioartitle;
 import com.gupiao.model.persist.entity.Gaokao_labelclassification;
 import com.gupiao.model.persist.entity.Gaokao_subjectchapter;
 import com.gupiao.model.persist.entity.Gaokao_vedioartitleSendPhone;
+import com.gupiao.model.persist.entity.Gupiao;
 import com.gupiao.model.persist.entity.Gupiaoshuju;
 import com.gupiao.model.persist.entity.Inoutprice;
 import com.gupiao.model.persist.entity.MbcjgsjsTemporary;
@@ -422,7 +423,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		}
 		this.SaveObject(scalewarm);
 	}
-	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=false)
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
 	public void generic_updatescalewarm() { // gupiaoshujupackage.updatescalewarm;
 
 		Session session=this.sessionFactory.getCurrentSession();
@@ -443,7 +444,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		session.doWork(work);
 	//	session.close();
 	}
-	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=false)
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
 	public void generic_updatecycwarm() { // gupiaoshujupackage.updatecycwarm;
 
 		Session session=this.sessionFactory.getCurrentSession();
@@ -463,13 +464,24 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		session.doWork(work);
 	//	session.close();
 	}	
-	
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
+	public Date getRzzgsMaxDate(String gupiaodaima){
+		Session session=this.sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery("select max(riqi) from rzzgs where gupiaodaima=:v_gupiaodaima and rzzg>0");
+		query.setParameter("v_gupiaodaima", gupiaodaima);
+		Date riqi = (Date)query.list().iterator().next();
+		
+		return riqi;
+		
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
 	public List<Scalewarmtmp> getScalewarmtmp(){
 
 		Session session=this.sessionFactory.getCurrentSession();
 		Query query = session.createSQLQuery("select a.gupiaodaima,b.gupiaomingcheng,a.zuidiriqi,a.scale,a.zuidijia,a.zuigaoriqi,a.zuigaojia,a.jiage,to_char(a.riqi,'yyyy-mm-dd') as riqi,a.beizhu,to_char(a.beizhuriqi,'yyyy-mm-dd') as beizhuriqi,a.huitiaobili,a.fantanbili,a.zaihuitiaobili,to_char(a.jierudianjiageariqi,'yyyy-mm-dd') as jierudianjiageariqi,to_char(a.jierudianjiagebriqi,'yyyy-mm-dd') as jierudianjiagebriqi from scalewarm a,gupiao b where a.gupiaodaima=b.gupiaodaima").addEntity(Scalewarmtmp.class);
         return query.list();
 	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
 	public List<Cycwarmtmp> getCycwarmtmp(){
 
 		Session session=this.sessionFactory.getCurrentSession();
@@ -698,8 +710,43 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		
 	}
 	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
-	public List<Gaokao_vedioartitle>   getGaokao_vedioartitle(String jsonString){
-		System.out.println(jsonString);
+	public List<Gaokao_vedioartitleSendPhone> getGaokao_vedioartitlefornoDownload(String jsonString){
+		String sql=" where 1=2 ";
+		
+		Session session=this.sessionFactory.getCurrentSession();
+		Query query = session.createQuery("from Gaokao_vedioartitle");
+		List<Gaokao_vedioartitle> list = query.list();
+		for(Gaokao_vedioartitle gaokao_vedioartitle:list){
+			String[] st=gaokao_vedioartitle.getTitle().split("\\(");
+			if(st.length>2){
+				String str="";
+				for(int i=0;i<st.length-1;i++){
+					if(i==0){
+						str=str+st[i];
+					}else{
+						str=str+"("+st[i];
+					}
+				}
+				if(!MyTools.fileIsExists(str)){
+				
+					sql=sql+" or vedioartitleid="+gaokao_vedioartitle.getVedioartitleid();
+				}
+			
+			}else{
+				if(st.length>1)
+					if(!MyTools.fileIsExists(st[st.length-2])){						
+						sql=sql+" or vedioartitleid="+gaokao_vedioartitle.getVedioartitleid();
+					}
+			}
+		
+		}
+		
+		
+		return getGaokao_vedioartitle(sql);
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
+	public List<Gaokao_vedioartitleSendPhone>   getGaokao_vedioartitle(String jsonString){
+		//System.out.println(jsonString);
 		
 		String sql="select o.vedioartitleid,o.title,o.url,o.subjectid,o.typeid,o.keyword,o.imageurl,"+
 		"o.comments,o.publication,o.inputdate,o.labelclassificationid,o.subjectchapterid,q.labelname as labelclassificationname,s.chaptername as subjectchaptername"+	
@@ -715,6 +762,204 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		Query query = session.createSQLQuery(sql).addEntity(Gaokao_vedioartitleSendPhone.class);
 		return query.list();
 		
+		
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
+	public List<Gaokao_vedioartitle>   downloadGaokao_vedioartitle(String jsonString){
+		
+		
+		String sql="select * from gaokao_vedioartitle";
+		Session session=this.sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery(sql).addEntity(Gaokao_vedioartitle.class);
+		return query.list();
+		
+		
+	}
+	
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
+	public List<Gupiao> getAllGupiao()
+
+	{
+
+		String sql="select * from gupiao";
+		Session session=this.sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery(sql).addEntity(Gupiao.class);
+		return query.list();
+		
+
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
+	public void generic_updaterzzgsjsqbh2(){
+		Session session=this.sessionFactory.getCurrentSession();
+		// 定义一个匿名类，实现了Work接口
+		Work work = new Work() {
+			public void execute(Connection conn) throws SQLException {
+				// 通过JDBC API执行用于批量更新的SQL语句
+				java.sql.CallableStatement cstmt;
+				cstmt = conn
+						.prepareCall("{  call testpackage.genericrzzgsjsqbh2}");
+				cstmt.execute();
+				cstmt.close();
+			}
+		};
+		// 执行work
+
+		session.doWork(work);
+	}
+	
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
+	public void generate_gupiaoshujus() { // gupiaoshujupackage.genericgupiaoshuju
+
+		
+		Session session=this.sessionFactory.getCurrentSession();
+		// 定义一个匿名类，实现了Work接口
+		Work work = new Work() {
+			public void execute(Connection conn) throws SQLException {
+				// 通过JDBC API执行用于批量更新的SQL语句
+				java.sql.CallableStatement cstmt;
+				cstmt = conn
+						.prepareCall("{  call gupiaoshujupackage.genericgupiaoshuju}");
+				cstmt.execute();
+				cstmt.close();
+			}
+		};
+		// 执行work
+
+		session.doWork(work);
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
+	public void generate_gupiaoshujuhuanshou() { 
+		
+		Session session=this.sessionFactory.getCurrentSession();
+		// 定义一个匿名类，实现了Work接口
+		Work work = new Work() {
+			public void execute(Connection conn) throws SQLException {
+				// 通过JDBC API执行用于批量更新的SQL语句
+				java.sql.CallableStatement cstmt;
+				cstmt = conn
+						.prepareCall("{  call gupiaoshujupackage.genericgupiaoshujuhuanshou}");
+				cstmt.execute();
+				cstmt.close();
+			}
+		};
+		// 执行work
+
+		session.doWork(work);
+		
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
+	public void generic_gupiaoshujucyc() { // gupiaoshujupackage.genericgupiaoshujucyc
+		
+
+		Session session=this.sessionFactory.getCurrentSession();
+		// 定义一个匿名类，实现了Work接口
+		Work work = new Work() {
+			public void execute(Connection conn) throws SQLException {
+				// 通过JDBC API执行用于批量更新的SQL语句
+				java.sql.CallableStatement cstmt;
+				cstmt = conn
+						.prepareCall("{  call gupiaoshujupackage.genericgupiaoshujucyc}");
+				cstmt.execute();
+				cstmt.close();
+			}
+		};
+		// 执行work
+
+		session.doWork(work);
+		
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
+	public void generic_zuidicyc() { // gupiaoshujupackage.genericgupiaoshuju
+		Session session=this.sessionFactory.getCurrentSession();
+		// 定义一个匿名类，实现了Work接口
+		Work work = new Work() {
+			public void execute(Connection conn) throws SQLException {
+				// 通过JDBC API执行用于批量更新的SQL语句
+				java.sql.CallableStatement cstmt;
+				cstmt = conn
+						.prepareCall("{  call testpackage.genericzuidicyc13}");
+				cstmt.execute();
+				cstmt.close();
+			}
+		};
+		// 执行work
+
+		session.doWork(work);
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
+	public void generic_zuoshouzhangfu() { // gupiaoshujupackage.genericzuoshouzhangfu
+		Session session=this.sessionFactory.getCurrentSession();
+		// 定义一个匿名类，实现了Work接口
+		Work work = new Work() {
+			public void execute(Connection conn) throws SQLException {
+				// 通过JDBC API执行用于批量更新的SQL语句
+				java.sql.CallableStatement cstmt;
+				cstmt = conn
+						.prepareCall("{  call gupiaoshujupackage.genericzuoshouzhangfu}");
+				cstmt.execute();
+				cstmt.close();
+			}
+		};
+		// 执行work
+
+		session.doWork(work);
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
+	public void generic_genericcyc55zhouqi(){
+		
+		Session session=this.sessionFactory.getCurrentSession();
+		// 定义一个匿名类，实现了Work接口
+		Work work = new Work() {
+			public void execute(Connection conn) throws SQLException {
+				// 通过JDBC API执行用于批量更新的SQL语句
+				java.sql.CallableStatement cstmt;
+				cstmt = conn
+						.prepareCall("{  call gupiaoshujupackage.genericcyc55zhouqi}");
+				cstmt.execute();
+				cstmt.close();
+			}
+		};
+		// 执行work
+
+		session.doWork(work);
+		
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
+	public void generic_updatetrendlines(){
+		Session session=this.sessionFactory.getCurrentSession();
+		// 定义一个匿名类，实现了Work接口
+		Work work = new Work() {
+			public void execute(Connection conn) throws SQLException {
+				// 通过JDBC API执行用于批量更新的SQL语句
+				java.sql.CallableStatement cstmt;
+				cstmt = conn
+						.prepareCall("{  call gupiaoshujupackage.updatetrendlines}");
+				cstmt.execute();
+				cstmt.close();
+			}
+		};
+		// 执行work
+
+		session.doWork(work);
+		
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
+	public void generichuanshou30cyc34count(){
+		Session session=this.sessionFactory.getCurrentSession();
+		// 定义一个匿名类，实现了Work接口
+		Work work = new Work() {
+			public void execute(Connection conn) throws SQLException {
+				// 通过JDBC API执行用于批量更新的SQL语句
+				java.sql.CallableStatement cstmt;
+				cstmt = conn
+						.prepareCall("{  call gupiaoshujupackage.generichuanshou30cyc34count}");
+				cstmt.execute();
+				cstmt.close();
+			}
+		};
+		// 执行work
+
+		session.doWork(work);
 		
 	}
 }

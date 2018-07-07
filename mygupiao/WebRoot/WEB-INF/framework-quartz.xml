@@ -20,6 +20,71 @@
           <!--  <value>TestJMS</value>  -->
        </property>
     </bean>
+    <!-- 20180308 -->
+    <bean id="genericGupiaoshuju" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+       <property name="targetObject">
+           <ref bean="taskJob" />
+       </property>
+       <property name="targetMethod">
+          <value>genericGupiaoshuju</value>  
+          <!--  <value>TestJMS</value>  -->
+       </property>
+    </bean>
+    <!-- 配置触发器 -->
+    <bean id="genericGupiaoshujuTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <!-- 这里不可以直接在属性jobDetail中引用taskJob，因为他要求的是一个jobDetail类型的对象，所以我们得通过MethodInvokingJobDetailFactoryBean来转一下 -->
+       <property name="jobDetail">
+           <ref bean="genericGupiaoshuju" />
+       </property>
+       <!-- 每天的下午3点到35分触发，具体说明见附录 -->
+       <property name="cronExpression">
+           <value>0 55 15 ? * MON-FRI</value>
+       </property>
+
+    </bean>
+    <bean id="genericGubenjiegou" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+       <property name="targetObject">
+           <ref bean="taskJob" />
+       </property>
+       <property name="targetMethod">
+          <value>genericGubenjiegou</value>  
+          <!--  <value>TestJMS</value>  -->
+       </property>
+    </bean>
+    <!-- 配置触发器 -->
+    <bean id="genericGubenjiegouTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <!-- 这里不可以直接在属性jobDetail中引用taskJob，因为他要求的是一个jobDetail类型的对象，所以我们得通过MethodInvokingJobDetailFactoryBean来转一下 -->
+       <property name="jobDetail">
+           <ref bean="genericGubenjiegou" />
+       </property>
+       <!-- 每周日上午8点触发，具体说明见附录 -->
+       <property name="cronExpression">
+           <value>0 0 8 ? * SUN </value>
+       </property>
+
+    </bean>
+    <bean id="genericRzzgs" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+       <property name="targetObject">
+           <ref bean="taskJob" />
+       </property>
+       <property name="targetMethod">
+          <value>genericRzzgs</value>  
+          <!--  <value>TestJMS</value>  -->
+       </property>
+    </bean>
+    <!-- 配置触发器 -->
+    <bean id="genericRzzgsTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <!-- 这里不可以直接在属性jobDetail中引用taskJob，因为他要求的是一个jobDetail类型的对象，所以我们得通过MethodInvokingJobDetailFactoryBean来转一下 -->
+       <property name="jobDetail">
+           <ref bean="genericRzzgs" />
+       </property>
+       <!-- 每周日下午6点触发，具体说明见附录 -->
+       <property name="cronExpression">
+           <value>0 0 18 ? * SUN </value>
+       </property>
+
+    </bean>
+    <!-- 20180308 -->
     <!-- 配置触发器 -->
     <bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <!-- 这里不可以直接在属性jobDetail中引用taskJob，因为他要求的是一个jobDetail类型的对象，所以我们得通过MethodInvokingJobDetailFactoryBean来转一下 -->
@@ -92,7 +157,9 @@
               <ref local="cronTriggera" />
               <ref local="cronTriggerb" />  
               <ref local="cronTriggerc" />      
-             
+              <ref local="genericGupiaoshujuTrigger" />
+              <ref local="genericGubenjiegouTrigger" />
+              <ref local="genericRzzgsTrigger" />              
            </list>
        </property>
     </bean>
