@@ -1,6 +1,7 @@
 package com.gupiao.model.dao.impl;
 
 
+import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.List;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -28,6 +30,8 @@ import com.gupiao.model.persist.entity.Gaokao_vedioartitle;
 import com.gupiao.model.persist.entity.Gaokao_labelclassification;
 import com.gupiao.model.persist.entity.Gaokao_subjectchapter;
 import com.gupiao.model.persist.entity.Gaokao_vedioartitleSendPhone;
+import com.gupiao.model.persist.entity.Gaokao_xyst;
+import com.gupiao.model.persist.entity.Gaokao_zyb;
 import com.gupiao.model.persist.entity.Gupiao;
 import com.gupiao.model.persist.entity.Gupiaoshuju;
 import com.gupiao.model.persist.entity.Inoutprice;
@@ -382,7 +386,13 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		session.close();
         return list;
 	}
-	
+	public List<Rzzgs> getrzzgsbygupiaodaimaandriqi(String gupiaodaima,String riqi){
+		Session session=this.sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery("select * from Rzzgs where gupiaodaima=:v_gupiaodaima and to_char(riqi,'yyyymmdd')=:v_riqi").addEntity(Rzzgs.class);
+		query.setParameter("v_gupiaodaima", gupiaodaima);
+		query.setParameter("v_riqi",riqi);
+		return query.list();
+	}
 	public List<Months> getMonths(){
 		
 		Session session=this.sessionFactory.getCurrentSession();
@@ -467,7 +477,7 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
 	public Date getRzzgsMaxDate(String gupiaodaima){
 		Session session=this.sessionFactory.getCurrentSession();
-		Query query = session.createSQLQuery("select max(riqi) from rzzgs where gupiaodaima=:v_gupiaodaima and rzzg>0");
+		Query query = session.createSQLQuery("select max(riqi) from rzzgs where gupiaodaima=:v_gupiaodaima and rzzg>0 and ltg>0");
 		query.setParameter("v_gupiaodaima", gupiaodaima);
 		Date riqi = (Date)query.list().iterator().next();
 		
@@ -590,7 +600,40 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 	
 		
 	}
-	
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=false)
+	public void insertGaokao_xyst(Gaokao_xyst gaokao_xyst)
+	{
+		Integer ID=0;
+		Session session=this.sessionFactory.getCurrentSession();
+		
+		Query query = session.createSQLQuery("select vedioartitle_sequence.nextval from dual");
+		java.math.BigDecimal currentID = (java.math.BigDecimal)query.list().iterator().next();
+		ID = new Integer(currentID.toString());
+				
+			
+		
+		gaokao_xyst.setXystid(ID);
+		
+		this.SaveObject(gaokao_xyst);
+		
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=false)
+	public void insertGaokao_zyb(Gaokao_zyb gaokao_zyb)
+	{
+		Integer ID=0;
+		Session session=this.sessionFactory.getCurrentSession();
+		
+		Query query = session.createSQLQuery("select vedioartitle_sequence.nextval from dual");
+		java.math.BigDecimal currentID = (java.math.BigDecimal)query.list().iterator().next();
+		ID = new Integer(currentID.toString());
+				
+			
+		
+		gaokao_zyb.setZybid(ID);
+		
+		this.SaveObject(gaokao_zyb);
+		
+	}
 	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=false)
 	public void updateGaokao_videoartitle(JSONArray jsonArray){
 		/*
@@ -695,6 +738,23 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		}		
 	}
 	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
+	public Integer whetherExistencexystUrl(String https_url,String comefrom) {
+		Session session=this.sessionFactory.getCurrentSession();
+		String sql="select count(*) from ";
+		if("001".equals(comefrom)) {
+			sql=sql + " gaokao_zyb  where url = :v_url";
+		}
+		if("002".equals(comefrom)) {
+			sql=sql+" gaokao_xyst  where url = :v_url";
+		}
+		
+		Query query = session.createSQLQuery(sql);
+		query.setParameter("v_url",https_url);
+		java.math.BigDecimal urlcount = (java.math.BigDecimal)query.list().iterator().next();
+		
+		return new Integer(urlcount.toString());
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
 	public Integer whetherExistenceUrl(String jsonString){
 		String[] splitUrl=jsonString.trim().split("/");
 		if(splitUrl.length>0){
@@ -708,6 +768,38 @@ public class GupiaoDAOImpl  implements GupiaoDAO {
 		return new Integer(0);
 		
 		
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
+	public List<Gaokao_xyst> getXystlist(String jsonString){
+		String sql="select * from gaokao_xyst "+jsonString  +"  order by xystid";
+		Session session=this.sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery(sql).addEntity(Gaokao_xyst.class);
+		
+		return query.list();
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
+	public List<Gaokao_zyb> getZyblist(String jsonString){
+		String sql="select * from gaokao_zyb "+jsonString  +"  order by zybid";
+		Session session=this.sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery(sql).addEntity(Gaokao_zyb.class);
+		
+		return query.list();
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
+	public List<Gaokao_xyst> getGaokao_xyst(String jsonString){
+		String sql="select * from gaokao_xyst where xystid=:v_xystid ";
+		Session session=this.sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery(sql).addEntity(Gaokao_xyst.class);
+		query.setParameter("v_xystid", Integer.parseInt(jsonString));
+		return query.list();
+	}
+	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
+	public List<Gaokao_zyb> getGaokao_zyb(String jsonString){
+		String sql="select * from gaokao_zyb where zybid=:v_zybid ";
+		Session session=this.sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery(sql).addEntity(Gaokao_zyb.class);
+		query.setParameter("v_zybid", Integer.parseInt(jsonString));
+		return query.list();
 	}
 	@Transactional(value="txManager",propagation=Propagation.REQUIRED,readOnly=true)
 	public List<Gaokao_vedioartitleSendPhone> getGaokao_vedioartitlefornoDownload(String jsonString){

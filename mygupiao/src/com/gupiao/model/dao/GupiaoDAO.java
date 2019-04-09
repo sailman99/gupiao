@@ -15,6 +15,8 @@ import com.gupiao.model.persist.entity.Cycwarmtmp;
 import com.gupiao.model.persist.entity.Gaokao_subjectchapter;
 import com.gupiao.model.persist.entity.Gaokao_vedioartitle;
 import com.gupiao.model.persist.entity.Gaokao_vedioartitleSendPhone;
+import com.gupiao.model.persist.entity.Gaokao_xyst;
+import com.gupiao.model.persist.entity.Gaokao_zyb;
 import com.gupiao.model.persist.entity.Gupiao;
 import com.gupiao.model.persist.entity.Gupiaoshuju;
 import com.gupiao.model.persist.entity.Inoutprice;
@@ -51,6 +53,7 @@ public interface GupiaoDAO {
 	public List<RzzgsShow> getrzzgsbygupiaodaima(String gupiaodaima);
 	public List<RzzgsShow> getrzzgsByCondition(Double jsqhb,Double jsqhb2,String riqi);
 	public List<Rzzgs> getrzzgsbyjsqbhandjsqbh2(Double jsqbh,Double jsqbh2);
+	public List<Rzzgs> getrzzgsbygupiaodaimaandriqi(String gupiaodaima,String riqi);	
 	public List getrzzgsGroupByCondition(Double jsqbh,Double jsqbh2);
 	public List<Months> getMonths();
 	public Integer getTrendlinesriqicount(String gupiaodaima,Date riqi1,Date riqi2);
@@ -68,6 +71,11 @@ public interface GupiaoDAO {
 	public void updateGaokao_labelclassification(JSONArray jsonArray);
 	public void updateGaokao_subjectchapter(JSONArray jsonArray);
 	public Integer whetherExistenceUrl(String jsonString);
+	public Integer whetherExistencexystUrl(String https_url,String comefrom);
+	public List<Gaokao_xyst> getXystlist(String jsonString);
+	public List<Gaokao_zyb> getZyblist(String jsonString);
+	public List<Gaokao_xyst> getGaokao_xyst(String jsonString);	
+	public List<Gaokao_zyb> getGaokao_zyb(String jsonString);	
 	public List<Gaokao_subjectchapter> getGaokao_subjectchapter(String jsonString);
 	public List<Gaokao_subjectchapter> getGaokao_labelclassification(String jsonString);
 	public List<Gaokao_vedioartitle>   downloadGaokao_vedioartitle(String jsonString);
@@ -84,4 +92,6 @@ public interface GupiaoDAO {
 	public void generichuanshou30cyc34count();
 	public Date getRzzgsMaxDate(String gupiaodaima);
 	public void generic_updaterzzgsjsqbh2();
+	public void insertGaokao_xyst(Gaokao_xyst gaokao_xyst);
+	public void insertGaokao_zyb(Gaokao_zyb gaokao_zyb);
 }

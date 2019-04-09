@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 import javax.mail.Message;
@@ -30,15 +33,7 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
-
-
-
-
-
-
-
-
+import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
@@ -49,6 +44,7 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.io.IOUtils;
 
 import com.gupiao.model.persist.entity.Dazhongjiaoyi;
+import com.gupiao.model.persist.entity.Gaokao_xyst;
 import com.gupiao.model.persist.entity.Gubanjiegou;
 import com.gupiao.model.persist.entity.Rzzgs;
 
@@ -156,6 +152,26 @@ public class MyTools {
 		   }
 		   else return "";
 	} 
+	public static BufferedReader readHttps(String destUrl) throws IOException{
+		
+		URL url;
+		 try {
+			 
+			 url = new URL(destUrl);
+		     HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
+	 
+		     BufferedReader br = 
+		    			new BufferedReader(
+		    				new InputStreamReader(con.getInputStream()));
+		     return br;
+	 
+	      } catch (MalformedURLException e) {
+		     e.printStackTrace();
+	      } catch (IOException e) {
+		     e.printStackTrace();
+	      }
+		 return null;
+	}
 	public static InputStream readHttmnew(String destUrl) throws IOException{
 		ByteArrayInputStream bais = null;
 		BufferedInputStream bis = null;
@@ -265,6 +281,141 @@ public class MyTools {
 	    		}
 	    	}
 	    	return null;
+	}
+	 
+	 public static String convertStringToUTF8(String s) {
+			if (s == null || s.equals("")) {
+				return null;
+			}
+			StringBuffer sb = new StringBuffer();
+			try {
+				char c;
+				for (int i = 0; i < s.length(); i++) {
+					c = s.charAt(i);
+					if (c >= 0 && c <= 255) {
+						sb.append(c);
+					} else {
+						byte[] b;
+						b = Character.toString(c).getBytes("utf-8");
+						for (int j = 0; j < b.length; j++) {
+							int k = b[j];
+							//转换为unsigned integer  无符号integer
+							/*if (k < 0)
+								k += 256;*/
+							k = k < 0? k+256:k;
+							//返回整数参数的字符串表示形式 作为十六进制（base16）中的无符号整数
+							//该值以十六进制（base16）转换为ASCII数字的字符串
+							sb.append(Integer.toHexString(k).toUpperCase());
+		 
+							// url转置形式
+							// sb.append("%" +Integer.toHexString(k).toUpperCase());
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return sb.toString();
+	 }
+	public static Gaokao_xyst jiexiXYST(String https_url) {
+		System.out.println(https_url);
+		URL url;
+	      try {
+		     url = new URL(https_url);
+		     HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
+		     try {
+		    	 BufferedReader br = 
+		    			new BufferedReader(
+		    				new InputStreamReader(con.getInputStream()));
+		    		   String input;
+		    		   StringBuffer sb = new StringBuffer();
+		    		   while ((input = br.readLine()) != null){
+		    		       sb.append(input);
+		    		   }
+		    		   
+		    		   String pattern = "</a></div><div class=\"content\"><div class=\"section-content\">";
+		    		      // 创建 Pattern 对象
+		    		   Pattern r = Pattern.compile(pattern);
+		    		 
+		    		      // 现在创建 matcher 对象
+		    		   Matcher m = r.matcher(sb);
+		    		  
+		    		   String problems=null,answers=null,analyzes=null;
+		    		   String surplus="";//存剩余部分
+		    		   
+		    		   if(m.find()) {//搜问题
+		    			   surplus=sb.substring(m.end());//取剩余部分
+		    			   System.out.println("surplus_1:"+surplus);
+		    			   pattern = "<div class=\"section-seperator\"></div><div class=\"section-header\">";
+			    		   r = Pattern.compile(pattern);
+			    		   m = r.matcher(surplus);
+			    		   if(m.find()) {
+			    			   //取出问题
+			    			   problems=surplus.substring(0, m.start());
+			    			   surplus=surplus.substring(m.end());//取剩余部分
+			    			   System.out.println("surplus_2:"+surplus);
+			    		   }
+			    		    pattern = "</div><div class=\"section-content\">";//去除多余部分
+				    	    r = Pattern.compile(pattern);
+				    	    m = r.matcher(surplus);
+				    	    if(m.find()) {//去除多余部分
+				    		  surplus=surplus.substring(m.end());//取剩余部分
+				    		  System.out.println("surplus_3:"+surplus);
+				    	    }
+				    	    pattern = "解析</div><div class=\"section-content\">";
+					        r = Pattern.compile(pattern);
+					    	m = r.matcher(surplus);
+					    	if(m.find()) {
+					    		answers=surplus.substring(0,m.start());
+					    		surplus=surplus.substring(m.end());//取剩余部分
+					    		System.out.println("surplus_4:"+surplus);
+					    	}else {
+					    		pattern = "解析:</div><div class=\"section-content\">";
+						    	r = Pattern.compile(pattern);
+						    	m = r.matcher(surplus);
+						    	if(m.find()) {
+						    		answers=surplus.substring(0,m.start());
+						    		surplus=surplus.substring(m.end());//取剩余部分
+						    		System.out.println("surplus_5:"+surplus);
+						    	}
+						    		   
+					    	}
+					    	answers=answers.replaceAll("</p></div><div class=\"section-seperator\">", "</p>").replaceAll("</p></div><div class=\"section-content\">", "</p>").replaceAll("</p></div><div class=\"section-header\">", "</p>");
+					    	answers=answers.replaceAll("</div><div class=\"section-seperator\"></div><div class=\"section-header\">", "");
+					    	answers=answers.replaceAll("</div><div class=\"section-content\">", "");
+					    	
+					    	pattern = "</div><div class=\"vip-content-wrapper\">";
+					    	r = Pattern.compile(pattern);
+					    	m = r.matcher(surplus);
+					    	if(m.find()) {
+					    		analyzes=surplus.substring(0,m.start());
+					    	}else {
+					    		pattern = "</div><div class=\"vip-toast\">";
+						    	r = Pattern.compile(pattern);
+						    	m = r.matcher(surplus);
+						    	if(m.find()) {
+						    		analyzes=surplus.substring(0,m.start());
+						    	}
+					    	}
+					    		   
+				    	}
+		    			//gupiaoDAO.insertGaokao_xyst(https_url, problems, answers, analyzes);	   
+		    		   br.close();
+		    		   Gaokao_xyst gaokao_xyst=new Gaokao_xyst();
+		    		   gaokao_xyst.setUrl(https_url);
+		    		   gaokao_xyst.setProblems(problems);
+		    		   gaokao_xyst.setAnswers(answers);
+		    		   gaokao_xyst.setAnalyzes(analyzes);
+		    		   return gaokao_xyst;
+		    		} catch (IOException e) {
+		    		   e.printStackTrace();
+		    		}
+	      } catch (MalformedURLException e) {
+		     e.printStackTrace();
+	      } catch (IOException e) {
+		     e.printStackTrace();
+	      }
+	      return null;
 	}
 	public static class Chichuangxinxi_tmp{
 		private Double sanhu;
@@ -1024,7 +1175,7 @@ public class MyTools {
 	    return bais;
 		
 	}
-	public static Double StrToDouble(String str){  //�ַ�תΪDouble
+	public static Double StrToDouble(String str){  
 		
 		
 		Double f =new Double(0);
@@ -1032,8 +1183,8 @@ public class MyTools {
 			return f;
 		}
 		else{
-		//ȥ��","��
-			str = str.replaceAll(",","");
+		
+			str = str.replaceAll(",","").replaceAll("%","");
 			
 			try {   
 				f = new Double(Double.parseDouble(str));   
@@ -1724,7 +1875,7 @@ public static void SendMailBy163(String subject,String msg) {
 			
 		}
 		
-	 public static List<Rzzgs>  getRzzgsnew(String tempurl,String gupiaodaima,Date maxriqi){
+	 public static List<Rzzgs>  getRzzgsnew(String tempurl,String gupiaodaima,Date maxriqi ){
 			String tmp_str,str;
 			String str_date;//日期变量
 			Double d_ltg=0.0;//第一行股东总数,第一行人均持股数.
@@ -1744,12 +1895,12 @@ public static void SendMailBy163(String subject,String msg) {
 				searchAndReturn.str_split();//利用初始定位截取后一段
 				searchAndReturn.setStr_position1("");
 		
-				d_ltg=getLtgZhongShu(gupiaodaima);
+				//d_ltg=getLtgZhongShu(gupiaodaima);
 				while(searchAndReturn.getInt_position()>-1){
 					
 						Rzzgs rzzgs= new Rzzgs();
 						rzzgs.setGupiaodaima(gupiaodaima);
-						rzzgs.setLtg(d_ltg);
+						//rzzgs.setLtg(d_ltg);
 						rzzgs.setGenericriqi(new Date());
 						for(int i=0;i<6;i++){
 								str=searchAndReturn.search();
@@ -1782,7 +1933,7 @@ public static void SendMailBy163(String subject,String msg) {
 										rzzgs.setZgb(MyTools.StrToDouble(str));
 									}
 									if(i==5){
-										//list.add(rzzgs);
+										rzzgs.setLtg(MyTools.StrToDouble(str));
 									}
 								}
 						}

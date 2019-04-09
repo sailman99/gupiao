@@ -16,16 +16,5 @@ import com.gupiao.model.persist.entity.Rzzgs;
 
 public class TestDate {
 
-	@Test
-	public void testGetgupiaoshuju() throws Exception {
-		
-		System.out.println((new SimpleDateFormat("yyyy-MM-dd")).format(new Date()));
-		//List<Rzzgs> list=(List<Rzzgs>)gupiaoDAO.getrzzgsByCondition(new Double(20),new Double(20),"2015-09-30");
-		/*
-		for(Rzzgs rzzgs:list){
-			System.out.println(rzzgs.getRiqi());
-		}*/
-		
-	}
-
+	
 }

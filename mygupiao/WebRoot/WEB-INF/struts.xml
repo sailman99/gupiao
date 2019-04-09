@@ -84,7 +84,29 @@
 		 	<result type="json">  
                     <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
             </result>     
-        </action>  
+        </action> 
+         <action name="JsonActiongetGaokao_xyst"     class="jsonAction" method="getGaokao_xyst">    
+		 	<result type="json">  
+                    <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
+            </result>     
+        </action> 
+         <action name="JsonActioninsertGaokao_zyborxyst"     class="jsonAction" method="insertGaokao_zyborxyst">    
+		 	<result type="json">  
+                    <param name="root">jsonObject</param>       <!-- 返回结果是JsonAction的字段resultTree,用参数root -->
+                   <param name="contentType">text/html</param>        
+            </result>     
+        </action> 
+        <action name="JsonActiongetGaokao_zyb"     class="jsonAction" method="getGaokao_zyb">    
+		 	<result type="json">  
+                    <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
+            </result>     
+        </action> 
+        <action name="JsonActioninsertGaokao_xyst"     class="jsonAction" method="insertGaokao_xyst">    
+		 	<result type="json">  
+                   <param name="root">jsonObject</param>       <!-- 返回结果是JsonAction的字段resultTree,用参数root -->
+                   <param name="contentType">text/html</param>  
+            </result>     
+        </action> 
          <action name="JsonActiongetGaokao_vedioartitlefornoDownload"     class="jsonAction" method="getGaokao_vedioartitlefornoDownload">    
 		 	<result type="json">  
                     <param name="root">resultTree</param>    <!-- 返回结果是JsonAction的字段resultTree,用参数root -->        
@@ -138,6 +160,22 @@
                    <param name="contentType">text/html</param>    
             </result>       
         </action> 
+        <action name="JsonActiongetXystlist"     class="jsonAction" method="getXystlist">    
+		 	<result type="json">  
+                   <param name="root">resultTree</param>       <!-- 返回结果是JsonAction的字段resultTree,用参数root -->
+                   <param name="contentType">text/html</param>    
+            </result>       
+        </action> 
+        <action name="JsonActiongetZyblist"     class="jsonAction" method="getZyblist">    
+		 	<result type="json">  
+                   <param name="root">resultTree</param>       <!-- 返回结果是JsonAction的字段resultTree,用参数root -->
+                   <param name="contentType">text/html</param>    
+            </result>       
+        </action> 
+        
+       
+        
+        
      	<action name="GupiaoAction" class="gupiaoAction">     	
         	<result>huolipanwarning.jsp</result>
         	<result name="gudongshutemp">gudongshutemp.jsp</result>

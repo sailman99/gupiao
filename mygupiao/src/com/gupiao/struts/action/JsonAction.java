@@ -1,13 +1,23 @@
 package com.gupiao.struts.action;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.ServletActionContext;
@@ -17,6 +27,8 @@ import org.springframework.stereotype.Service;
 
 import com.gupiao.model.dao.GupiaoDAO;
 import com.gupiao.model.persist.entity.Cycwarm;
+import com.gupiao.model.persist.entity.Gaokao_xyst;
+import com.gupiao.model.persist.entity.Gaokao_zyb;
 import com.gupiao.model.persist.entity.Gupiaoshuju;
 import com.gupiao.model.persist.entity.JsonGupiaoshuju;
 import com.gupiao.model.persist.entity.Rzzgs;
@@ -41,9 +53,12 @@ public class JsonAction  extends ActionSupport {
 	private JSONObject jsonObject;
 	private String jsonString;
 	private GupiaoDAO gupiaoDAO;
-	
+	private String https_url;
 	private String gupiaodaima;
-	
+	private String subject;
+	private String preblem;
+	private String comefrom;
+	private String xystid;
 	private String riqi;
 	
 	private Double jsqbh;
@@ -58,13 +73,53 @@ public class JsonAction  extends ActionSupport {
 	
 	}
 	
+	public String getComefrom() {
+		return comefrom;
+	}
+
+	public void setComefrom(String comefrom) {
+		this.comefrom = comefrom;
+	}
+
 	public String getGupiaodaima() {
 		return gupiaodaima;
 	}
 	
+	
+	
+	
 
-	
-	
+	public String getXystid() {
+		return xystid;
+	}
+
+	public void setXystid(String xystid) {
+		this.xystid = xystid;
+	}
+
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+
+	public String getPreblem() {
+		return preblem;
+	}
+
+	public void setPreblem(String preblem) {
+		this.preblem = preblem;
+	}
+
+	public String getHttps_url() {
+		return https_url;
+	}
+
+	public void setHttps_url(String https_url) {
+		this.https_url = https_url;
+	}
 
 	public JSONObject getJsonObject() {
 		return jsonObject;
@@ -434,8 +489,233 @@ public class JsonAction  extends ActionSupport {
 		return "success";
 	}
 	public String updateGaokao_subjectchapter(){
-		System.out.println(jsonString);
+		//System.out.println(jsonString);
 		this.gupiaoDAO.updateGaokao_subjectchapter(JSONArray.fromObject(jsonString));
+		return "success";
+	}
+	public void in_Gaokao_zyb(String https_url,StringBuffer sb) {
+		String[] str_mfind=sb.toString().split("<dl class=\"trace refer-answer\">");
+		String surplus;
+		Gaokao_zyb gaokao_zyb = new Gaokao_zyb();
+		gaokao_zyb.setUrl(https_url);		
+		gaokao_zyb.setInputdate(new Date());
+		gaokao_zyb.setUpdatedate(new Date());
+		gaokao_zyb.setSubjectid(subject);
+		gaokao_zyb.setTypeid(preblem);
+		  
+		   for(int i=0;i<str_mfind.length;i++) {
+			   //System.out.println(str_mfind[i]);
+			   if(str_mfind[i].indexOf("题目")>-1) {
+				   //System.out.println("题目");
+				   surplus=str_mfind[i].substring(str_mfind[i].indexOf("<dt>题目：</dt>")+"<dt>题目：</dt>".length());
+				   gaokao_zyb.setProblems(surplus.replaceAll("</span>                                              </dd>            </dl>          </dd>                      <dd>","</span></dd>"));
+					
+			   }
+			   if(str_mfind[i].indexOf("考点")>-1) {
+				   //System.out.println("考点");
+				   surplus=str_mfind[i].substring(str_mfind[i].indexOf("<dt>考点：</dt>")+"<dt>考点：</dt>".length());
+				   gaokao_zyb.setExamination(surplus.replaceAll("</dd>              </dl>            </dd>                                <dd>", "</dd>"));
+			   }
+			   if(str_mfind[i].indexOf("分析")>-1) {
+				   //System.out.println("分析");
+				   surplus=str_mfind[i].substring(str_mfind[i].indexOf("<dt>分析：</dt>")+"<dt>分析：</dt>".length());
+					gaokao_zyb.setAnalyzes(surplus.replaceAll("</dd>              </dl>            </dd>                    <dd>", "</dd>"));
+			   }
+			   if(str_mfind[i].indexOf("解答")>-1) {
+				   //System.out.println("解答");
+				   surplus=str_mfind[i].substring(str_mfind[i].indexOf("<dt>解答：</dt>")+"<dt>解答：</dt>".length());
+				   
+				   if(surplus.indexOf("</body>")>-1) {
+				   surplus=surplus.substring(0,surplus.indexOf("</body>"));
+				   }
+				   gaokao_zyb.setAnswers(surplus.replaceAll("</dd>            </dl>          </dd>        </dl>             </div>      </div></div>", "</dd>"));
+			   }
+		   }
+		   this.gupiaoDAO.insertGaokao_zyb(gaokao_zyb);
+		   
+	}
+	
+	public void in_Gaokao_xyst(String https_url,StringBuffer sb) {
+		
+		String pattern = "</a></div><div class=\"content\"><div class=\"section-content\">";
+			   
+			  // 创建 Pattern 对象
+	   Pattern r = Pattern.compile(pattern);
+	 
+			  // 现在创建 matcher 对象
+	   Matcher m = r.matcher(sb);
+	  
+	   String problems=null,answers=null,analyzes=null;
+	   String surplus="";//存剩余部分
+	   
+	   if(m.find()) {//搜问题
+			   surplus=sb.substring(m.end());//取剩余部分
+			   pattern = "<div class=\"section-seperator\"></div><div class=\"section-header\">答案";
+			  
+			   r = Pattern.compile(pattern);
+			   m = r.matcher(surplus);
+			   if(m.find()) {
+				   //取出问题
+				  
+				   problems=surplus.substring(0, m.start());
+				   surplus=surplus.substring(m.end());//取剩余部分
+			   }
+			    pattern = "</div><div class=\"section-content\">";//去除多余部分
+			r = Pattern.compile(pattern);
+			m = r.matcher(surplus);
+			if(m.find()) {//去除多余部分
+			  surplus=surplus.substring(m.end());//取剩余部分
+			}
+			pattern = "解析</div><div class=\"section-content\">";
+			//pattern = "</div><div class=\"section-content\">";
+			    r = Pattern.compile(pattern);
+				m = r.matcher(surplus);
+				if(m.find()) {
+					answers=surplus.substring(0,m.start());
+					surplus=surplus.substring(m.end());//取剩余部分
+				}else {
+					pattern = "解析:</div><div class=\"section-content\">";
+					//pattern = "</div><div class=\"section-content\">";
+			    	r = Pattern.compile(pattern);
+			    	m = r.matcher(surplus);
+			    	if(m.find()) {
+			    		answers=surplus.substring(0,m.start());
+			    		surplus=surplus.substring(m.end());//取剩余部分
+			    	}else {//如果都没有找到，表明这道题是没有解析的
+			    		pattern = "</div><div class=\"vip-content-wrapper\">";
+				    	r = Pattern.compile(pattern);
+				    	m = r.matcher(surplus);
+				    	if(m.find()) {
+				    		answers=surplus.substring(0,m.start());
+				    		surplus=surplus.substring(m.end());//取剩余部分
+				    	}else {
+				    		pattern = "</div><div class=\"vip-toast\">";
+					    	r = Pattern.compile(pattern);
+					    	m = r.matcher(surplus);
+					    	if(m.find()) {
+					    		answers=surplus.substring(0,m.start());
+					    		surplus=surplus.substring(m.end());//取剩余部分
+					    	}
+				    	}
+			    	}
+				}
+				problems=problems.replaceAll("</p></div>", "</p>").replaceAll("</ul></div>", "</ul>");
+				answers=answers.replaceAll("</p></div><div class=\"section-seperator\">", "</p>").replaceAll("</p></div><div class=\"section-content\">", "</p>").replaceAll("</p></div><div class=\"section-header\">", "</p>");
+				answers=answers.replaceAll("</div><div class=\"section-seperator\"></div><div class=\"section-header\">", "");
+				answers=answers.replaceAll("</div><div class=\"section-content\">", "");
+				
+				pattern = "</div><div class=\"vip-content-wrapper\">";
+				r = Pattern.compile(pattern);
+				m = r.matcher(surplus);
+				if(m.find()) {
+					analyzes=surplus.substring(0,m.start());//.replaceAll("</div>", "").replaceAll("</xhtml>", "</xhtml></div>");
+				}else {
+					pattern = "</div><div class=\"vip-toast\">";
+			    	r = Pattern.compile(pattern);
+			    	m = r.matcher(surplus);
+			    	if(m.find()) {
+			    		analyzes=surplus.substring(0,m.start());//.replaceAll("</div>", "").replaceAll("</xhtml>", "</xhtml></div>");
+			    	}
+				}
+					   
+	 	}
+				   
+			
+	   //this.gupiaoDAO.insertGaokao_xyst
+	   Gaokao_xyst gaokao_xyst=new Gaokao_xyst();
+	   gaokao_xyst.setUrl(https_url);
+	   gaokao_xyst.setProblems(problems);
+	   gaokao_xyst.setAnswers(answers);
+	   gaokao_xyst.setAnalyzes(analyzes);
+	   gaokao_xyst.setInputdate(new Date());
+	   gaokao_xyst.setUpdatedate(new Date());
+	   gaokao_xyst.setSubjectid(subject);
+	   gaokao_xyst.setTypeid(preblem);
+	   this.gupiaoDAO.insertGaokao_xyst(gaokao_xyst);
+	
+	     
+
+	}
+	public void insertGaokao_zyborxyst() throws Exception{
+		System.out.println("jsonString:"+jsonString);
+		JSONArray array = JSONArray.fromObject(jsonString); 
+		 for (int i = 0; i < array.size(); i++)  
+	        {  
+			 jsonObject = array.getJSONObject(i); 
+			 
+			 this.https_url= URLDecoder.decode(jsonObject.get("https_url").toString(),"UTF-8");
+			 this.subject=jsonObject.get("subject").toString();
+			 this.preblem=jsonObject.get("preblem").toString();
+			 this.comefrom=jsonObject.get("comefrom").toString();
+			 }
+		/* System.out.println("jsonString:"+jsonString);
+		 System.out.println("https_url:"+https_url);
+		 System.out.println("subject:"+subject);
+		 System.out.println("comefrom:"+comefrom);*/
+		 insertGaokao_xyst();
+	}
+	public String insertGaokao_xyst() {
+		
+		URL url;
+		
+		Integer urlcounts= this.gupiaoDAO.whetherExistencexystUrl(https_url,comefrom);
+		
+		if(urlcounts==0) {
+			
+	      try {  
+		     url = new URL(https_url);
+		     HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
+		  
+		     try {
+		    	 BufferedReader br = 
+		    			new BufferedReader(
+		    				new InputStreamReader(con.getInputStream(),"utf-8"));
+		    	 
+		    		   String input;
+		    		   StringBuffer sb = new StringBuffer();
+		    	
+		    		   while ((input = br.readLine()) != null){
+		    			   
+		    		       sb.append(input);
+		    		   }
+		    	
+		    		   if("001".equals(comefrom)) {
+		    	
+		    			   in_Gaokao_zyb(https_url, sb);
+		    			
+		    		   }
+		    		   if("002".equals(comefrom)) {
+		    			   in_Gaokao_xyst(https_url, sb);
+		    		   }
+		    	
+		    		   br.close();
+		    		   //
+		    	 
+		    		} catch (IOException e) {
+		    		   e.printStackTrace();
+		    		}
+	
+		    	 
+	 
+	      } catch (MalformedURLException e) {
+		     e.printStackTrace();
+	      } catch (IOException e) {
+		     e.printStackTrace();
+	      }
+		
+	
+		}
+		
+	
+		
+		JSONObject jsObject = new JSONObject();
+		jsObject.put("success", true);	
+		if(urlcounts==0) {
+			jsObject.put("message", "保存成功！");
+		}else {
+			jsObject.put("message", "该题已存在！");
+		}
+		setJsonObject(jsObject);
 		return "success";
 	}
 	public String whetherExistenceUrl(){
@@ -450,6 +730,35 @@ public class JsonAction  extends ActionSupport {
 		jsObject.put("urlcounts",urlcounts);
 		setJsonObject(jsObject);
 		 
+		return "success";
+	}
+	
+	public String getGaokao_xyst() {
+		JsonConfig config = new JsonConfig();  
+		config.registerJsonValueProcessor(java.sql.Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd"));  
+
+		setResultTree(JSONArray.fromObject(gupiaoDAO.getGaokao_xyst(jsonString),config));
+		return "success";
+	}
+	public String getGaokao_zyb() {
+		JsonConfig config = new JsonConfig();  
+		config.registerJsonValueProcessor(java.sql.Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd"));  
+
+		setResultTree(JSONArray.fromObject(gupiaoDAO.getGaokao_zyb(jsonString),config));
+		return "success";
+	}
+	public String getXystlist() {
+		JsonConfig config = new JsonConfig();  
+		config.registerJsonValueProcessor(java.sql.Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd"));  
+		//System.out.println(jsonString);
+		setResultTree(JSONArray.fromObject(gupiaoDAO.getXystlist(jsonString),config));
+		return "success";
+	}
+	public String getZyblist() {
+		JsonConfig config = new JsonConfig();  
+		config.registerJsonValueProcessor(java.sql.Timestamp.class,new DateJsonValueProcessor("yyyy-MM-dd"));  
+		//System.out.println(jsonString);
+		setResultTree(JSONArray.fromObject(gupiaoDAO.getZyblist(jsonString),config));
 		return "success";
 	}
 	public String getGaokao_vedioartitle(){

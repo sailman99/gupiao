@@ -38,10 +38,10 @@
 			value="oracle.jdbc.driver.OracleDriver">
 		</property>
 		<property name="url"
-			value="jdbc:oracle:thin:@113.107.154.131:1521:ctais">
+			value="jdbc:oracle:thin:@113.107.154.134:1521:ctais">
 		</property>
 		<property name="username" value="tempuser"></property>
-		<property name="password" value="12345678"></property>
+		<property name="password" value="87654321"></property>
 	</bean> 
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">

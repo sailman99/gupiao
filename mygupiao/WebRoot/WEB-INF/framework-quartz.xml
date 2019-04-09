@@ -36,12 +36,25 @@
        <property name="jobDetail">
            <ref bean="genericGupiaoshuju" />
        </property>
-       <!-- 每天的下午3点到35分触发，具体说明见附录 -->
+       <!-- 每天的下午3点到55分触发，具体说明见附录 -->
        <property name="cronExpression">
            <value>0 55 15 ? * MON-FRI</value>
        </property>
 
     </bean>
+    
+    <bean id="genericGupiaoshujuTriggerB" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <!-- 这里不可以直接在属性jobDetail中引用taskJob，因为他要求的是一个jobDetail类型的对象，所以我们得通过MethodInvokingJobDetailFactoryBean来转一下 -->
+       <property name="jobDetail">
+           <ref bean="genericGupiaoshuju" />
+       </property>
+       <!-- 每天的下午4点到55分触发，具体说明见附录 -->
+       <property name="cronExpression">
+           <value>0 55 16 ? * MON-FRI</value>
+       </property>
+
+    </bean>
+    
     <bean id="genericGubenjiegou" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
        <property name="targetObject">
            <ref bean="taskJob" />
@@ -80,7 +93,7 @@
        </property>
        <!-- 每周日下午6点触发，具体说明见附录 -->
        <property name="cronExpression">
-           <value>0 0 18 ? * SUN </value>
+           <value>0 00 7 ? * MON-FRI </value>
        </property>
 
     </bean>
@@ -158,7 +171,7 @@
               <ref local="cronTriggerb" />  
               <ref local="cronTriggerc" />      
               <ref local="genericGupiaoshujuTrigger" />
-              <ref local="genericGubenjiegouTrigger" />
+              <ref local="genericGupiaoshujuTriggerB" />                            
               <ref local="genericRzzgsTrigger" />              
            </list>
        </property>
